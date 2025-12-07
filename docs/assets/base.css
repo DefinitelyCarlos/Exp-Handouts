@@ -428,6 +428,64 @@ body {
 
 /* Larger view tweaks */
 
+/* Scroll-snap full-screen card deck (opt-in per page) */
+
+.body--snap {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page--snap {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.card--snap {
+  width: 100%;
+}
+
+/* Typography inside snap cards */
+
+.snap-lead {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 10px 0 0;
+}
+
+.snap-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 8px 0 0;
+}
+
+.snap-list {
+  margin: 8px 0 0 18px;
+  padding: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page--snap {
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+  }
+}
+
 @media (min-width: 640px) {
   .page {
     max-width: 560px;
@@ -447,3 +505,4 @@ body {
     align-items: center;
   }
 }
+
