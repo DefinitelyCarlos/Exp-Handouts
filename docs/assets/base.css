@@ -506,3 +506,88 @@ body {
   }
 }
 
+/* ============================
+   SNAP CARD TUNING (ACCESSIBLE)
+   ============================ */
+
+/* Make the snap cards fill more of the screen and feel more "hero" sized */
+.snap-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 20px 0 24px; /* slightly more vertical use */
+}
+
+.card--snap {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 22px 26px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Headings on cards: larger and clearer */
+.card--snap h1,
+.card--snap h2 {
+  margin: 0 0 14px;
+  font-size: 1.4rem;
+  line-height: 1.25;
+}
+
+/* Higher contrast, larger body text */
+.snap-lead,
+.snap-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #e5e7eb; /* higher contrast than var(--text-muted) */
+  margin-top: 8px;
+}
+
+.snap-list {
+  margin: 8px 0 0 18px;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e5e7eb;
+}
+
+/* Make bold text pop a bit more inside cards */
+.card--snap strong {
+  color: #ffffff;
+}
+
+/* Small-screen safeguard:
+   - Slightly reduce text size
+   - Allow the card itself to scroll if content is too tall
+*/
+@media (max-height: 700px), (max-width: 360px) {
+  .snap-lead,
+  .snap-text {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .snap-list {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .card--snap {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Respect prefers-reduced-motion (already disables snap type above)
+   but also kill the reveal animation if motion is reduced */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
