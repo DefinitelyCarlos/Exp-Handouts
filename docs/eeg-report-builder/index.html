@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EEG Report Builder</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      max-width: 1100px;
+      margin-inline: auto;
+      line-height: 1.4;
+      background: #f5f5f5;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr);
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    fieldset {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 0.9rem;
+      background: #fff;
+    }
+    legend {
+      font-weight: 600;
+      padding: 0 0.4rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+    }
+    .inline-options label {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .small {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    input[type="text"],
+    select,
+    textarea.template-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.35rem 0.45rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 0.15rem;
+      margin-bottom: 0.4rem;
+    }
+    textarea.template-input {
+      min-height: 60px;
+      resize: vertical;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .output-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #2563eb;
+      color: #fff;
+    }
+    button.secondary {
+      background: #4b5563;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* OUTPUT AREA: editable, wrapped, light green-beige */
+    #output {
+      width: 100%;
+      min-height: 450px;
+      resize: vertical;
+      padding: 0.75rem;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      border: 1px solid #b5c2a8;
+      background: #f3f6e8;
+      color: #000;
+      white-space: pre-wrap;  /* preserve line breaks + wrap */
+      word-wrap: break-word;  /* wrap long tokens */
+      box-sizing: border-box;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.03) inset;
+    }
+
+    #copy-status {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-top: 0.25rem;
+      min-height: 1em;
+    }
+
+    .section-group-title {
+      font-weight: 600;
+      margin-top: 0.2rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      #output {
+        min-height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>EEG Report Builder</h1>
+  <p class="subtitle">
+    Choose study type and sections, then generate a draft report. You can freely edit the text before copying.
+  </p>
+
+  <div class="container">
+    <!-- LEFT: controls -->
+    <div>
+
+      <!-- Study type -->
+      <fieldset>
+        <legend>Study Type</legend>
+        <div class="inline-options">
+          <label>
+            <input type="radio" name="studyType" value="videoEEG" checked />
+            Video-EEG
+          </label>
+          <label>
+            <input type="radio" name="studyType" value="ceribell" />
+            Ceribell Rapid EEG
+          </label>
+        </div>
+        <p class="small">
+          Study type changes the style of the procedure text, findings, and impression blocks.
+        </p>
+      </fieldset>
+
+      <!-- Sections to include -->
+      <fieldset>
+        <legend>Sections to Include</legend>
+        <label>
+          <input type="checkbox" id="includeProcedure" checked />
+          Procedure / Context
+        </label>
+        <label>
+          <input type="checkbox" id="includeFindings" checked />
+          Findings
+        </label>
+        <label>
+          <input type="checkbox" id="includeImpression" checked />
+          Impression
+        </label>
+        <p class="small">
+          Uncheck to generate only a subset (e.g., Findings-only for prelim notes).
+        </p>
+      </fieldset>
+
+      <!-- VIDEO-EEG OPTIONS -->
+      <div id="videoEEG-options">
+        <fieldset>
+          <legend>Video-EEG – Procedure</legend>
+          <label>
+            Study Duration
+            <input type="text" id="vEEG-duration" placeholder="e.g., 30 minutes; 2 hours; 24 hours" />
+          </label>
+          <label>
+            Pertinent History
+            <textarea id="vEEG-history" class="template-input" placeholder="As per documentation, the patient is ..."></textarea>
+          </label>
+          <label>
+            Level of Alertness
+            <input type="text" id="vEEG-alertness" placeholder="e.g., Awake and asleep" />
+          </label>
+          <label>
+            AEDs/ASMs during study
+            <input type="text" id="vEEG-aeds" placeholder="e.g., levetiracetam, lacosamide" />
+          </label>
+          <label>
+            Artifacts / Limitations
+            <input type="text" id="vEEG-artifacts" placeholder="Within expected tolerances" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Video-EEG – Findings</legend>
+          <div class="section-group-title">Background</div>
+          <select id="vEEG-background">
+            <option value="">[leave blank]</option>
+            <option value="The background was continuous and reactive. During maximal wakefulness, the background consisted of a poorly organized 6–7 Hz moderate-voltage rhythm distributed symmetrically in posterior head regions.">
+              6–7 Hz, continuous, reactive
+            </option>
+            <option value="The background was continuous and reactive and during wakefulness consisted of an 8–9 Hz moderate-voltage rhythm that was well modulated and distributed symmetrically in the posterior head regions.">
+              8–9 Hz, continuous, reactive
+            </option>
+            <option value="The background was continuous and reactive and during wakefulness consisted of a 9–10 Hz moderate-voltage rhythm that was well modulated and distributed symmetrically in the posterior head regions.">
+              9–10 Hz, continuous, reactive
+            </option>
+            <option value="The background was continuous and reactive and during wakefulness consisted of a 10–11 Hz moderate-voltage rhythm that was well modulated and distributed symmetrically in the posterior head regions.">
+              10–11 Hz, continuous, reactive
+            </option>
+            <option value="The recording lacked an organized background of wakefulness. The background was continuous and reactive and consisted predominantly of diffuse theta-predominant mixed-frequency activity.">
+              Diffuse theta-predominant
+            </option>
+            <option value="The recording lacked wakefulness. The background was continuous and modestly reactive and consisted predominantly of diffuse delta-predominant mixed-frequency activity.">
+              Diffuse delta-predominant
+            </option>
+            <option value="No evidence of wakefulness; the background consisted of delta-predominant mixed-frequency activity.">
+              No evidence of wakefulness
+            </option>
+          </select>
+
+          <label>
+            Slowing (free text)
+            <input type="text" id="vEEG-slowing" placeholder="e.g., Focal slowing over the left temporal region" />
+          </label>
+
+          <label>
+            Interictal epileptiform activity
+            <input type="text" id="vEEG-interictal" placeholder="e.g., None; rare left temporal spikes" />
+          </label>
+
+          <label>
+            Ictal activity
+            <input type="text" id="vEEG-ictal" placeholder="e.g., None; 3 focal seizures arising from ..." />
+          </label>
+
+          <label>
+            Other findings / artifacts
+            <textarea id="vEEG-other" class="template-input" placeholder="e.g., EMG artifact obscuring portions of the study"></textarea>
+          </label>
+
+          <div class="section-group-title">Sleep</div>
+          <select id="vEEG-sleep">
+            <option value="">[leave blank]</option>
+            <option value="Stage 1 and 2 sleep were seen, including vertex waves, K complexes, and sleep spindles.">
+              Stage 1–2 with K complexes & spindles
+            </option>
+            <option value="Stage 1 sleep was seen, including vertex waves.">
+              Stage 1 only
+            </option>
+            <option value="Awake and drowsy states were captured. Drowsiness was characterized by attenuation and fragmentation of the posterior background rhythm.">
+              Awake & drowsy only
+            </option>
+            <option value="Only the awake state was captured.">
+              Awake only
+            </option>
+            <option value="Sleep architecture was not recorded.">
+              Sleep architecture not recorded
+            </option>
+          </select>
+
+          <div class="section-group-title">Activation Procedures</div>
+          <label>
+            Hyperventilation
+            <select id="vEEG-hv">
+              <option value="">[not mentioned]</option>
+              <option value="Hyperventilation was not performed.">Not performed</option>
+              <option value="Hyperventilation was performed and resulted in mild diffuse slowing.">
+                Performed – mild diffuse slowing
+              </option>
+            </select>
+          </label>
+          <label>
+            Photic stimulation
+            <select id="vEEG-photic">
+              <option value="">[not mentioned]</option>
+              <option value="Photic stimulation was not performed.">
+                Not performed
+              </option>
+              <option value="Photic stimulation was performed and did not elicit a photoparoxysmal response.">
+                Performed – no photoparoxysmal response
+              </option>
+              <option value="Photic stimulation was performed and photic driving was seen at [] Hz.">
+                Performed – photic driving
+              </option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Video-EEG – Impression</legend>
+          <div class="inline-options">
+            <label>
+              <input type="radio" name="vEEG-impression-type" value="normal" checked />
+              Normal
+            </label>
+            <label>
+              <input type="radio" name="vEEG-impression-type" value="abnormal" />
+              Abnormal
+            </label>
+          </div>
+
+          <label>
+            If abnormal – key abnormal findings
+            <textarea id="vEEG-impression-abnormal" class="template-input"
+              placeholder="e.g., Focal left temporal epileptiform discharges and focal slowing consistent with cortical dysfunction in this region."></textarea>
+          </label>
+
+          <label>
+            Consistent with / Comment
+            <textarea id="vEEG-impression-comment" class="template-input"
+              placeholder="e.g., These findings are consistent with increased risk of focal seizures arising from the left temporal region."></textarea>
+          </label>
+        </fieldset>
+      </div>
+
+      <!-- CERIBELL OPTIONS -->
+      <div id="ceribell-options" class="hidden">
+        <fieldset>
+          <legend>Ceribell – Procedure</legend>
+          <label>
+            Time parameters
+            <input type="text" id="c-time" placeholder="e.g., 2-hour Ceribell recording beginning at 14:32" />
+          </label>
+          <label>
+            Pertinent history
+            <textarea id="c-history" class="template-input" placeholder="e.g., Evaluation for possible nonconvulsive status epilepticus in ICU patient with ..."></textarea>
+          </label>
+          <label>
+            AEDs/ASMs during study
+            <input type="text" id="c-aeds" placeholder="e.g., levetiracetam, propofol infusion" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Ceribell – Findings</legend>
+          <label>
+            Background activity
+            <textarea id="c-background" class="template-input"
+              placeholder="Within limitations of the study montage, appreciable background activity consisted of ..."></textarea>
+          </label>
+          <label>
+            Interictal epileptiform activity
+            <input type="text" id="c-interictal" placeholder="e.g., None; limited sensitivity of montage" />
+          </label>
+          <label>
+            Rhythmic / periodic patterns
+            <input type="text" id="c-rp" placeholder="e.g., None; GRDA; LPDs at 1–2 Hz over ..." />
+          </label>
+          <label>
+            Ictal activity
+            <input type="text" id="c-ictal" placeholder="e.g., None; electrographic seizures at ..." />
+          </label>
+          <label>
+            Other events / artifacts
+            <textarea id="c-other" class="template-input" placeholder="e.g., Movement and EMG artifact intermittently limit interpretation."></textarea>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Ceribell – Impression</legend>
+          <label>
+            Summary phrase
+            <textarea id="c-impression-main" class="template-input"
+              placeholder="e.g., This Ceribell study was notable for ... or This Ceribell study showed no seizures, sustained rhythmic periodic patterns, or overt epileptiform activity."></textarea>
+          </label>
+          <label>
+            Consistent with / Comment
+            <textarea id="c-impression-comment" class="template-input"
+              placeholder="e.g., These findings are consistent with ..."></textarea>
+          </label>
+          <label>
+            Limited montage disclaimer (optional)
+            <textarea id="c-disclaimer" class="template-input"
+              placeholder="Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted."></textarea>
+          </label>
+        </fieldset>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: output -->
+    <div>
+      <div class="output-header">
+        <strong>Generated Report</strong>
+        <div class="output-buttons">
+          <button id="generate-btn" type="button">Generate</button>
+          <button id="copy-btn" type="button" class="secondary">Copy</button>
+        </div>
+      </div>
+      <textarea id="output"></textarea>
+      <p id="copy-status"></p>
+    </div>
+  </div>
+
+  <script>
+    // --- Utility helpers ---
+
+    function getSelectedRadio(name, defaultValue = "") {
+      const nodes = document.querySelectorAll(`input[name="${name}"]`);
+      for (const n of nodes) if (n.checked) return n.value;
+      return defaultValue;
+    }
+
+    function nonEmptyLinesJoin(lines) {
+      return lines
+        .map(l => l.trim())
+        .filter(l => l.length > 0)
+        .join("\n");
+    }
+
+    // --- Builder functions: VIDEO-EEG ---
+
+    function buildVideoEEGProcedure() {
+      const duration = document.getElementById("vEEG-duration").value.trim();
+      const history = document.getElementById("vEEG-history").value.trim();
+      const alertness = document.getElementById("vEEG-alertness").value.trim();
+      const aeds = document.getElementById("vEEG-aeds").value.trim();
+      const artifacts = document.getElementById("vEEG-artifacts").value.trim();
+
+      const lines = [];
+
+      lines.push("Video-EEG Study Report");
+
+      if (duration) lines.push(`Study Duration: ${duration}`);
+      if (history) lines.push(`Pertinent History:\n${history}`);
+      if (alertness) lines.push(`Level of Alertness:\n${alertness}`);
+      if (aeds) lines.push(`AED/ASMs during study:\n${aeds}`);
+
+      lines.push(
+        "Technical Aspects: This video-EEG study was done with scalp electrodes positioned according to the 10–20 International system of electrode placement. Video-EEG data were recorded continuously and digitally stored."
+      );
+
+      if (artifacts) {
+        lines.push(`Artifacts / Limitations:\n${artifacts}`);
+      }
+
+      return nonEmptyLinesJoin(lines);
+    }
+
+    function buildVideoEEGFindings() {
+      const background = document.getElementById("vEEG-background").value.trim();
+      const slowing = document.getElementById("vEEG-slowing").value.trim();
+      const interictal = document.getElementById("vEEG-interictal").value.trim();
+      const ictal = document.getElementById("vEEG-ictal").value.trim();
+      const other = document.getElementById("vEEG-other").value.trim();
+      const sleep = document.getElementById("vEEG-sleep").value.trim();
+      const hv = document.getElementById("vEEG-hv").value.trim();
+      const photic = document.getElementById("vEEG-photic").value.trim();
+
+      const blocks = [];
+
+      const bgLines = [];
+      bgLines.push("EEG Findings");
+      if (background) {
+        bgLines.push("Background:");
+        bgLines.push(background);
+      }
+      if (slowing) {
+        bgLines.push("");
+        bgLines.push("Slowing:");
+        bgLines.push(slowing);
+      }
+      blocks.push(nonEmptyLinesJoin(bgLines));
+
+      const epLines = [];
+      if (interictal || ictal || other) {
+        epLines.push("Epileptiform Activity");
+        if (interictal) {
+          epLines.push("Interictal epileptiform activity:");
+          epLines.push(interictal);
+        }
+        if (ictal) {
+          if (epLines.length) epLines.push("");
+          epLines.push("Ictal activity:");
+          epLines.push(ictal);
+        }
+        if (other) {
+          epLines.push("");
+          epLines.push("Other findings / artifacts:");
+          epLines.push(other);
+        }
+        blocks.push(nonEmptyLinesJoin(epLines));
+      }
+
+      const sleepLines = [];
+      if (sleep) {
+        sleepLines.push("Sleep Recordings");
+        sleepLines.push(sleep);
+        blocks.push(nonEmptyLinesJoin(sleepLines));
+      }
+
+      const actLines = [];
+      if (hv || photic) {
+        actLines.push("Activation Procedures");
+        if (hv) actLines.push(hv);
+        if (photic) actLines.push(photic);
+        blocks.push(nonEmptyLinesJoin(actLines));
+      }
+
+      return blocks.filter(b => b.trim().length > 0).join("\n\n");
+    }
+
+    function buildVideoEEGImpression() {
+      const type = getSelectedRadio("vEEG-impression-type", "normal");
+      const abnormal = document.getElementById("vEEG-impression-abnormal").value.trim();
+      const comment = document.getElementById("vEEG-impression-comment").value.trim();
+
+      const lines = [];
+      lines.push("EEG Impression");
+
+      if (type === "normal") {
+        lines.push(
+          "This EEG study was within normal limits in awake and/or sleep states as recorded. No seizures nor epileptiform discharges were seen."
+        );
+      } else {
+        if (abnormal) {
+          lines.push("This EEG study was abnormal due to:");
+          lines.push(abnormal);
+        }
+        if (comment) {
+          lines.push("");
+          lines.push(comment);
+        }
+      }
+
+      return nonEmptyLinesJoin(lines);
+    }
+
+    // --- Builder functions: CERIBELL ---
+
+    function buildCeribellProcedure() {
+      const time = document.getElementById("c-time").value.trim();
+      const history = document.getElementById("c-history").value.trim();
+      const aeds = document.getElementById("c-aeds").value.trim();
+
+      const lines = [];
+      lines.push("Ceribell Rapid EEG Study Report");
+
+      if (time) lines.push(`Time Parameters:\n${time}`);
+      if (history) lines.push(`Pertinent History:\n${history}`);
+      if (aeds) lines.push(`AEDs/ASMs during study:\n${aeds}`);
+
+      lines.push(
+        "Technical Aspects: This rapid EEG study was performed using a 10-lead, 8-channel system (Ceribell) positioned circumferentially and recorded in a bipolar montage, with EEG channels corresponding approximately to the Fp1–F7, F7–T3, T3–T5, and T5–O1 sites on the left and the Fp2–F8, F8–T4, T4–T6, and T6–O2 sites on the right according to the International 10–20 System. There was no coverage of parasagittal electrode sites. Data were acquired digitally at a sampling rate of 250 Hz with a frequency response of 0.5–100 Hz. The entirety of the study was reviewed. In addition, findings and events identified by a proprietary decision support algorithm were reviewed."
+      );
+
+      return nonEmptyLinesJoin(lines);
+    }
+
+    function buildCeribellFindings() {
+      const background = document.getElementById("c-background").value.trim();
+      const interictal = document.getElementById("c-interictal").value.trim();
+      const rp = document.getElementById("c-rp").value.trim();
+      const ictal = document.getElementById("c-ictal").value.trim();
+      const other = document.getElementById("c-other").value.trim();
+
+      const blocks = [];
+
+      const bgLines = [];
+      bgLines.push("Ceribell Findings");
+      if (background) {
+        bgLines.push("Background activity:");
+        bgLines.push(background);
+      }
+      blocks.push(nonEmptyLinesJoin(bgLines));
+
+      const epLines = [];
+      if (interictal || rp || ictal || other) {
+        if (interictal) {
+          epLines.push("Interictal epileptiform activity:");
+          epLines.push(interictal);
+        }
+        if (rp) {
+          if (epLines.length) epLines.push("");
+          epLines.push("Rhythmic / periodic patterns:");
+          epLines.push(rp);
+        }
+        if (ictal) {
+          if (epLines.length) epLines.push("");
+          epLines.push("Ictal activity:");
+          epLines.push(ictal);
+        }
+        if (other) {
+          epLines.push("");
+          epLines.push("Other events / artifacts:");
+          epLines.push(other);
+        }
+        blocks.push(nonEmptyLinesJoin(epLines));
+      }
+
+      return blocks.filter(b => b.trim().length > 0).join("\n\n");
+    }
+
+    function buildCeribellImpression() {
+      const main = document.getElementById("c-impression-main").value.trim();
+      const comment = document.getElementById("c-impression-comment").value.trim();
+      const disclaimer = document.getElementById("c-disclaimer").value.trim();
+
+      const lines = [];
+      lines.push("Ceribell Impression");
+
+      if (main) lines.push(main);
+      if (comment) {
+        lines.push("");
+        lines.push(comment);
+      }
+      if (disclaimer) {
+        lines.push("");
+        lines.push(disclaimer);
+      }
+
+      return nonEmptyLinesJoin(lines);
+    }
+
+    // --- Main build function ---
+
+    function buildOutput() {
+      const studyType = getSelectedRadio("studyType", "videoEEG");
+      const includeProcedure = document.getElementById("includeProcedure").checked;
+      const includeFindings = document.getElementById("includeFindings").checked;
+      const includeImpression = document.getElementById("includeImpression").checked;
+
+      const blocks = [];
+
+      if (studyType === "videoEEG") {
+        if (includeProcedure) blocks.push(buildVideoEEGProcedure());
+        if (includeFindings) blocks.push(buildVideoEEGFindings());
+        if (includeImpression) blocks.push(buildVideoEEGImpression());
+      } else {
+        if (includeProcedure) blocks.push(buildCeribellProcedure());
+        if (includeFindings) blocks.push(buildCeribellFindings());
+        if (includeImpression) blocks.push(buildCeribellImpression());
+      }
+
+      document.getElementById("output").value = blocks
+        .filter(b => b.trim().length > 0)
+        .join("\n\n");
+    }
+
+    // --- Copy to clipboard ---
+
+    async function copyOutput() {
+      const out = document.getElementById("output");
+      const status = document.getElementById("copy-status");
+      const text = out.value;
+
+      if (!text.trim()) {
+        status.textContent = "Nothing to copy yet.";
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = "Copied.";
+      } catch (e) {
+        out.select();
+        document.execCommand("copy");
+        status.textContent = "Copied (fallback).";
+      }
+
+      setTimeout(() => (status.textContent = ""), 2000);
+    }
+
+    // --- UI wiring ---
+
+    function updateStudyTypeVisibility() {
+      const studyType = getSelectedRadio("studyType", "videoEEG");
+      const v = document.getElementById("videoEEG-options");
+      const c = document.getElementById("ceribell-options");
+
+      if (studyType === "videoEEG") {
+        v.classList.remove("hidden");
+        c.classList.add("hidden");
+      } else {
+        c.classList.remove("hidden");
+        v.classList.add("hidden");
+      }
+    }
+
+    function init() {
+      // Study type switching
+      document.querySelectorAll('input[name="studyType"]').forEach(radio => {
+        radio.addEventListener("change", updateStudyTypeVisibility);
+      });
+
+      document.getElementById("generate-btn").addEventListener("click", buildOutput);
+      document.getElementById("copy-btn").addEventListener("click", copyOutput);
+
+      // Default disclaimer text for Ceribell
+      document.getElementById("c-disclaimer").value =
+        "Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted.";
+
+      updateStudyTypeVisibility();
+      buildOutput(); // initial skeleton
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
