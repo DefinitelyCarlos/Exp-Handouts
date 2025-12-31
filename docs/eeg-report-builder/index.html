@@ -453,18 +453,6 @@
               placeholder="e.g., Evaluation for possible nonconvulsive status epilepticus in ICU patient with ..."></textarea>
           </label>
 
-          <div class="section-group-title">Level of Alertness</div>
-          <div class="inline-options" style="flex-wrap: wrap;">
-            <label><input type="radio" name="c-alertness" value="awakeAsleep" checked /> awake and asleep</label>
-            <label><input type="radio" name="c-alertness" value="awakeDrowsy" /> awake and drowsy</label>
-            <label><input type="radio" name="c-alertness" value="awake" /> awake</label>
-            <label><input type="radio" name="c-alertness" value="confused" /> confused</label>
-            <label><input type="radio" name="c-alertness" value="lethargic" /> lethargic</label>
-            <label><input type="radio" name="c-alertness" value="obtunded" /> obtunded</label>
-            <label><input type="radio" name="c-alertness" value="stuporous" /> stuporous</label>
-            <label><input type="radio" name="c-alertness" value="comatose" /> comatose</label>
-          </div>
-
           <div class="section-group-title">AEDs/ASMs during study</div>
           <div class="inline-options" style="flex-wrap: wrap; display:block;">
             <label><input type="checkbox" class="c-aed" value="levetiracetam" /> levetiracetam</label>
@@ -814,10 +802,10 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
       const lines = [];
 
       lines.push("EEG Findings\n-----------------------");
-      lines.push("Background:\n-----------------------\n" + withDefault(background));
+      lines.push("BACKGROUND:\n" + withDefault(background));
       lines.push("Slowing:\n" + withDefault(slowing));
 
-      lines.push("Epileptiform Activity\n-----------------------");
+      lines.push("EPILEPTIFORM ACTIVITY");
       lines.push("Interictal epileptiform activity:\n" + withDefault(interictal));
       lines.push("Ictal activity:\n" + withDefault(ictal));
       lines.push("Other findings / artifacts:\n" + withDefault(other));
@@ -880,7 +868,6 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
     function buildCeribellProcedure() {
       const time      = document.getElementById("c-time").value.trim();
       const historyRaw = document.getElementById("c-history").value.trim();
-      const alertnessText = getAlertnessText("c-alertness");
       const aedsText      = getAEDString("c");
 
       const historyText = (historyRaw || "[]").trim() || "[]";
@@ -891,7 +878,6 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
       lines.push(
         "Pertinent History:\nAs per documentation, the patient is a " + historyText + "."
       );
-      lines.push("Level of Alertness:\n" + alertnessText);
       lines.push("AEDs/ASMs during study:\n" + aedsText);
       lines.push(
         "Technical Aspects: This rapid EEG study was performed using a 10-lead, 8-channel system (Ceribell) positioned circumferentially and recorded in a bipolar montage, with EEG channels corresponding approximately to the Fp1–F7, F7–T3, T3–T5, and T5–O1 sites on the left and the Fp2–F8, F8–T4, T4–T6, and T6–O2 sites on the right according to the International 10–20 System. There was no coverage of parasagittal electrode sites. Data were acquired digitally at a sampling rate of 250 Hz with a frequency response of 0.5–100 Hz. The entirety of the study was reviewed. In addition, findings and events identified by a proprietary decision support algorithm (ClarityPro) were reviewed."
