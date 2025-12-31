@@ -518,6 +518,8 @@
             Summary phrase
             <textarea id="c-impression-main" class="template-input"
               placeholder="e.g., This Ceribell study was notable for ... or This Ceribell study showed no seizures, sustained rhythmic periodic patterns, or overt epileptiform activity."></textarea>
+              
+          
           </label>
           <label>
             Interpretation comment
@@ -527,7 +529,8 @@
           <label>
             Limited montage disclaimer (optional)
             <textarea id="c-disclaimer" class="template-input"
-              placeholder="Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted."></textarea>
+            "Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted.";
+
           </label>
         </fieldset>
 
@@ -928,7 +931,7 @@
       }
 
       lines.push("Interpretation comment:\n" + commentText);
-      lines.push("Limited montage / follow-up comment:\n" + withDefault(disclaimer));
+      lines.push("Note:" + withDefault(disclaimer));
 
       return nonEmptyLinesJoin(lines);
     }
@@ -1153,10 +1156,6 @@
       document.getElementById("generate-btn").addEventListener("click", buildOutput);
       document.getElementById("generate-btn-multi").addEventListener("click", buildOutput);
       document.getElementById("copy-btn").addEventListener("click", copyOutput);
-
-      // Default disclaimer text for Ceribell
-      document.getElementById("c-disclaimer").value =
-        "Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted.";
 
       // Default history brackets so they’re ready to edit
       document.getElementById("vEEG-history").value = "[]";
