@@ -166,11 +166,17 @@
             <input type="radio" name="studyType" value="ceribell" />
             Ceribell Rapid EEG
           </label>
+          <!-- NEW -->
+          <label>
+            <input type="radio" name="studyType" value="ceribellInterim" />
+            Ceribell Interim Update
+          </label>
         </div>
         <p class="small">
           Study type changes the style of the procedure text, findings, and impression blocks.
         </p>
       </fieldset>
+
 
       <!-- Sections to include -->
       <fieldset>
@@ -400,6 +406,82 @@
             Limited montage disclaimer (optional)
             <textarea id="c-disclaimer" class="template-input"
               placeholder="Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted."></textarea>
+          </label>
+        </fieldset>
+      </div>
+      <!-- CERIBELL INTERIM OPTIONS (NEW) -->
+      <div id="ceribell-interim-options" class="hidden">
+        <fieldset>
+          <legend>Ceribell – Interim Update</legend>
+      
+          <p class="small">
+            This template is for quick, running updates while a Ceribell study is in progress.
+            It generates a focused interim report with a header and two key statements.
+          </p>
+      
+          <label>
+            Reviewed through (time)
+            <input type="text" id="ci-through-time"
+                   placeholder="e.g., 15:30, 17:45, or 'approximately 2 hours of recording'" />
+          </label>
+      
+          <div class="section-group-title">So far, results are consistent with:</div>
+          <div class="inline-options">
+            <label>
+              <input type="radio" name="ci-background" value="severeSedation" checked />
+              diffuse severe encephalopathy (as can be seen with heavy sedation)
+            </label>
+            <label>
+              <input type="radio" name="ci-background" value="diffuseEnceph" />
+              diffuse encephalopathy
+            </label>
+            <label>
+              <input type="radio" name="ci-background" value="awake" />
+              an awake patient
+            </label>
+            <label>
+              <input type="radio" name="ci-background" value="myogenic" />
+              excessive myogenic artifact without clear evidence of wakefulness or of NCSE
+            </label>
+          </div>
+      
+          <div class="section-group-title">In regards to seizures / NCSE:</div>
+          <div class="inline-options" style="display:block;">
+            <label>
+              <input type="radio" name="ci-seizureStatus" value="negativeClean" checked />
+              NEGATIVE for NCSE and no overt seizures, rhythmic periodic patterns, or overt epileptiform activity have been seen
+            </label>
+            <label>
+              <input type="radio" name="ci-seizureStatus" value="negativeNotable" />
+              NEGATIVE for NCSE but notable for [findings]
+            </label>
+            <label>
+              <input type="radio" name="ci-seizureStatus" value="concernNCSE" />
+              Notable for concerns of [] which in the appropriate clinical context may represent NCSE; [team] team made aware at [time].
+            </label>
+          </div>
+      
+          <!-- Free-text slots for the bracketed pieces -->
+          <label>
+            If "NEGATIVE but notable" selected – findings:
+            <input type="text" id="ci-seizure-findings"
+                   placeholder="e.g., intermittent GRDA, LPDs over right temporal region" />
+          </label>
+      
+          <label>
+            If "concerns of []" selected – concerning finding:
+            <input type="text" id="ci-seizure-concern"
+                   placeholder="e.g., evolving right temporal rhythmic delta activity" />
+          </label>
+      
+          <label>
+            Team notified (e.g., 'neuro ICU team'):
+            <input type="text" id="ci-team" placeholder="e.g., neuro ICU team" />
+          </label>
+      
+          <label>
+            Time team made aware:
+            <input type="text" id="ci-team-time" placeholder="e.g., 16:05" />
           </label>
         </fieldset>
       </div>
@@ -640,6 +722,65 @@
       return nonEmptyLinesJoin(lines);
     }
 
+    function buildCeribellInterim() {
+      const through = document.getElementById("ci-through-time").value.trim();
+    
+      const bgKey = getSelectedRadio("ci-background", "severeSedation");
+      const seizureKey = getSelectedRadio("ci-seizureStatus", "negativeClean");
+    
+      const findings = document.getElementById("ci-seizure-findings").value.trim();
+      const concern = document.getElementById("ci-seizure-concern").value.trim();
+      const team = document.getElementById("ci-team").value.trim();
+      const notifyTime = document.getElementById("ci-team-time").value.trim();
+    
+      // Map background radios to phrases
+      const bgMap = {
+        severeSedation: "diffuse severe encephalopathy (as can be seen with heavy sedation)",
+        diffuseEnceph: "diffuse encephalopathy",
+        awake: "an awake patient",
+        myogenic: "excessive myogenic artifact without clear evidence of wakefulness or of NCSE"
+      };
+    
+      // Map seizures radios to sentences
+      let seizureSentence = "";
+      if (seizureKey === "negativeClean") {
+        seizureSentence =
+          "NEGATIVE for NCSE and no overt seizures, rhythmic periodic patterns, or overt epileptiform activity have been seen.";
+      } else if (seizureKey === "negativeNotable") {
+        const f = findings || "other EEG abnormalities as described above";
+        seizureSentence = `NEGATIVE for NCSE but notable for ${f}.`;
+      } else if (seizureKey === "concernNCSE") {
+        const c = concern || "electrographic abnormalities";
+        const t = team || "the treating team";
+        const timePhrase = notifyTime ? ` at ${notifyTime}` : "";
+        seizureSentence =
+          `Notable for concerns of ${c} which in the appropriate clinical context may represent NCSE; ` +
+          `${t} made aware${timePhrase}.`;
+      }
+    
+      const lines = [];
+    
+      lines.push('Ceribell "Rapid EEG" Study Report');
+      lines.push('---------------------------------');
+      lines.push("");
+    
+      const timePart = through ? ` through ${through}` : "";
+      lines.push(`INTERIM UPDATE: Initial portions of study reviewed${timePart}.`);
+    
+      const bgPhrase = bgMap[bgKey];
+      if (bgPhrase) {
+        lines.push("");
+        lines.push(`So far, results are consistent with ${bgPhrase}.`);
+      }
+    
+      if (seizureSentence) {
+        lines.push("");
+        lines.push(`In regards to seizures / NCSE: ${seizureSentence}`);
+      }
+    
+      return nonEmptyLinesJoin(lines);
+    }
+    
     // --- Main build function ---
 
     function buildOutput() {
@@ -651,20 +792,29 @@
       const blocks = [];
 
       if (studyType === "videoEEG") {
-        if (includeProcedure) blocks.push(buildVideoEEGProcedure());
-        if (includeFindings) blocks.push(buildVideoEEGFindings());
+        if (includeProcedure)  blocks.push(buildVideoEEGProcedure());
+        if (includeFindings)   blocks.push(buildVideoEEGFindings());
         if (includeImpression) blocks.push(buildVideoEEGImpression());
+      } else if (studyType === "ceribellInterim") {
+        // For interim updates, ignore the section checkboxes and just build the focused interim text
+        blocks.push(buildCeribellInterim());
       } else {
-        if (includeProcedure) blocks.push(buildCeribellProcedure());
-        if (includeFindings) blocks.push(buildCeribellFindings());
+        // Standard Ceribell full report
+        if (includeProcedure)  blocks.push(buildCeribellProcedure());
+        if (includeFindings)   blocks.push(buildCeribellFindings());
         if (includeImpression) blocks.push(buildCeribellImpression());
       }
+
 
       document.getElementById("output").value = blocks
         .filter(b => b.trim().length > 0)
         .join("\n\n");
     }
 
+
+
+
+    
     // --- Copy to clipboard ---
 
     async function copyOutput() {
@@ -695,15 +845,23 @@
       const studyType = getSelectedRadio("studyType", "videoEEG");
       const v = document.getElementById("videoEEG-options");
       const c = document.getElementById("ceribell-options");
-
+      const ci = document.getElementById("ceribell-interim-options");
+    
       if (studyType === "videoEEG") {
         v.classList.remove("hidden");
         c.classList.add("hidden");
-      } else {
-        c.classList.remove("hidden");
+        ci.classList.add("hidden");
+      } else if (studyType === "ceribell") {
         v.classList.add("hidden");
+        c.classList.remove("hidden");
+        ci.classList.add("hidden");
+      } else if (studyType === "ceribellInterim") {
+        v.classList.add("hidden");
+        c.classList.add("hidden");
+        ci.classList.remove("hidden");
       }
     }
+
 
     function init() {
       // Study type switching
