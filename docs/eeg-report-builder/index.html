@@ -166,17 +166,11 @@
             <input type="radio" name="studyType" value="ceribell" />
             Ceribell Rapid EEG
           </label>
-          <!-- NEW -->
-          <label>
-            <input type="radio" name="studyType" value="ceribellInterim" />
-            Ceribell Interim Update
-          </label>
         </div>
         <p class="small">
           Study type changes the style of the procedure text, findings, and impression blocks.
         </p>
       </fieldset>
-
 
       <!-- Sections to include -->
       <fieldset>
@@ -193,8 +187,12 @@
           <input type="checkbox" id="includeImpression" checked />
           Impression
         </label>
+        <label>
+          <input type="checkbox" id="includeCeribellInterim" />
+          Ceribell Interim Update
+        </label>
         <p class="small">
-          Uncheck to generate only a subset (e.g., Findings-only for prelim notes).
+          Uncheck to generate only a subset (e.g., Findings-only for prelim notes, or Interim-only for a quick update).
         </p>
       </fieldset>
 
@@ -206,21 +204,48 @@
             Study Duration
             <input type="text" id="vEEG-duration" placeholder="e.g., 30 minutes; 2 hours; 24 hours" />
           </label>
+
           <label>
             Pertinent History
-            <textarea id="vEEG-history" class="template-input" placeholder="As per documentation, the patient is ..."></textarea>
+            <textarea id="vEEG-history" class="template-input"
+              placeholder="e.g., evaluation for focal seizures, spells of concern, etc."></textarea>
           </label>
-          <label>
-            Level of Alertness
-            <input type="text" id="vEEG-alertness" placeholder="e.g., Awake and asleep" />
-          </label>
-          <label>
-            AEDs/ASMs during study
-            <input type="text" id="vEEG-aeds" placeholder="e.g., levetiracetam, lacosamide" />
-          </label>
+
+          <div class="section-group-title">Level of Alertness</div>
+          <div class="inline-options" style="flex-wrap: wrap;">
+            <label><input type="radio" name="vEEG-alertness" value="awakeAsleep" checked /> awake and asleep</label>
+            <label><input type="radio" name="vEEG-alertness" value="awakeDrowsy" /> awake and drowsy</label>
+            <label><input type="radio" name="vEEG-alertness" value="awake" /> awake</label>
+            <label><input type="radio" name="vEEG-alertness" value="confused" /> confused</label>
+            <label><input type="radio" name="vEEG-alertness" value="lethargic" /> lethargic</label>
+            <label><input type="radio" name="vEEG-alertness" value="obtunded" /> obtunded</label>
+            <label><input type="radio" name="vEEG-alertness" value="stuporous" /> stuporous</label>
+            <label><input type="radio" name="vEEG-alertness" value="comatose" /> comatose</label>
+          </div>
+
+          <div class="section-group-title">AEDs/ASMs during study</div>
+          <div class="inline-options" style="flex-wrap: wrap; display:block;">
+            <label><input type="checkbox" class="vEEG-aed" value="levetiracetam" /> levetiracetam</label>
+            <label><input type="checkbox" class="vEEG-aed" value="propofol" /> propofol</label>
+            <label><input type="checkbox" class="vEEG-aed" value="midazolam" /> midazolam</label>
+            <label><input type="checkbox" class="vEEG-aed" value="lorazepam" /> lorazepam</label>
+            <label><input type="checkbox" class="vEEG-aed" value="lacosamide" /> lacosamide</label>
+            <label><input type="checkbox" class="vEEG-aed" value="valproic acid" /> valproic acid</label>
+            <label><input type="checkbox" class="vEEG-aed" value="dexmedetomidine" /> dexmedetomidine</label>
+            <label><input type="checkbox" class="vEEG-aed" value="clobazam" /> clobazam</label>
+            <label><input type="checkbox" class="vEEG-aed" value="phenytoin" /> phenytoin</label>
+            <label><input type="checkbox" class="vEEG-aed" value="clonazepam" /> clonazepam</label>
+            <label><input type="checkbox" class="vEEG-aed" value="topiramate" /> topiramate</label>
+            <label><input type="checkbox" class="vEEG-aed" value="oxcarbazepine" /> oxcarbazepine</label>
+            <label>
+              Other:
+              <input type="text" id="vEEG-aeds-other" placeholder="e.g., perampanel, brivaracetam" />
+            </label>
+          </div>
+
           <label>
             Artifacts / Limitations
-            <input type="text" id="vEEG-artifacts" placeholder="Within expected tolerances" />
+            <input type="text" id="vEEG-artifacts" placeholder="[Within expected tolerances]" />
           </label>
         </fieldset>
 
@@ -269,7 +294,8 @@
 
           <label>
             Other findings / artifacts
-            <textarea id="vEEG-other" class="template-input" placeholder="e.g., EMG artifact obscuring portions of the study"></textarea>
+            <textarea id="vEEG-other" class="template-input"
+              placeholder="e.g., EMG artifact obscuring portions of the study"></textarea>
           </label>
 
           <div class="section-group-title">Sleep</div>
@@ -357,12 +383,41 @@
           </label>
           <label>
             Pertinent history
-            <textarea id="c-history" class="template-input" placeholder="e.g., Evaluation for possible nonconvulsive status epilepticus in ICU patient with ..."></textarea>
+            <textarea id="c-history" class="template-input"
+              placeholder="e.g., Evaluation for possible nonconvulsive status epilepticus in ICU patient with ..."></textarea>
           </label>
-          <label>
-            AEDs/ASMs during study
-            <input type="text" id="c-aeds" placeholder="e.g., levetiracetam, propofol infusion" />
-          </label>
+
+          <div class="section-group-title">Level of Alertness</div>
+          <div class="inline-options" style="flex-wrap: wrap;">
+            <label><input type="radio" name="c-alertness" value="awakeAsleep" checked /> awake and asleep</label>
+            <label><input type="radio" name="c-alertness" value="awakeDrowsy" /> awake and drowsy</label>
+            <label><input type="radio" name="c-alertness" value="awake" /> awake</label>
+            <label><input type="radio" name="c-alertness" value="confused" /> confused</label>
+            <label><input type="radio" name="c-alertness" value="lethargic" /> lethargic</label>
+            <label><input type="radio" name="c-alertness" value="obtunded" /> obtunded</label>
+            <label><input type="radio" name="c-alertness" value="stuporous" /> stuporous</label>
+            <label><input type="radio" name="c-alertness" value="comatose" /> comatose</label>
+          </div>
+
+          <div class="section-group-title">AEDs/ASMs during study</div>
+          <div class="inline-options" style="flex-wrap: wrap; display:block;">
+            <label><input type="checkbox" class="c-aed" value="levetiracetam" /> levetiracetam</label>
+            <label><input type="checkbox" class="c-aed" value="propofol" /> propofol</label>
+            <label><input type="checkbox" class="c-aed" value="midazolam" /> midazolam</label>
+            <label><input type="checkbox" class="c-aed" value="lorazepam" /> lorazepam</label>
+            <label><input type="checkbox" class="c-aed" value="lacosamide" /> lacosamide</label>
+            <label><input type="checkbox" class="c-aed" value="valproic acid" /> valproic acid</label>
+            <label><input type="checkbox" class="c-aed" value="dexmedetomidine" /> dexmedetomidine</label>
+            <label><input type="checkbox" class="c-aed" value="clobazam" /> clobazam</label>
+            <label><input type="checkbox" class="c-aed" value="phenytoin" /> phenytoin</label>
+            <label><input type="checkbox" class="c-aed" value="clonazepam" /> clonazepam</label>
+            <label><input type="checkbox" class="c-aed" value="topiramate" /> topiramate</label>
+            <label><input type="checkbox" class="c-aed" value="oxcarbazepine" /> oxcarbazepine</label>
+            <label>
+              Other:
+              <input type="text" id="c-aeds-other" placeholder="e.g., perampanel, brivaracetam" />
+            </label>
+          </div>
         </fieldset>
 
         <fieldset>
@@ -386,7 +441,8 @@
           </label>
           <label>
             Other events / artifacts
-            <textarea id="c-other" class="template-input" placeholder="e.g., Movement and EMG artifact intermittently limit interpretation."></textarea>
+            <textarea id="c-other" class="template-input"
+              placeholder="e.g., Movement and EMG artifact intermittently limit interpretation."></textarea>
           </label>
         </fieldset>
 
@@ -408,82 +464,83 @@
               placeholder="Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted."></textarea>
           </label>
         </fieldset>
-      </div>
-      <!-- CERIBELL INTERIM OPTIONS (NEW) -->
-      <div id="ceribell-interim-options" class="hidden">
-        <fieldset>
-          <legend>Ceribell – Interim Update</legend>
-      
-          <p class="small">
-            This template is for quick, running updates while a Ceribell study is in progress.
-            It generates a focused interim report with a header and two key statements.
-          </p>
-      
-          <label>
-            Reviewed through (time)
-            <input type="text" id="ci-through-time"
-                   placeholder="e.g., 15:30, 17:45, or 'approximately 2 hours of recording'" />
-          </label>
-      
-          <div class="section-group-title">So far, results are consistent with:</div>
-          <div class="inline-options">
+
+        <!-- CERIBELL INTERIM OPTIONS (section under Ceribell) -->
+        <div id="ceribell-interim-options">
+          <fieldset>
+            <legend>Ceribell – Interim Update</legend>
+
+            <p class="small">
+              Use this for quick, running updates while a Ceribell study is in progress.
+              It generates a focused interim section with a header line and seizure/NCSE status.
+            </p>
+
             <label>
-              <input type="radio" name="ci-background" value="severeSedation" checked />
-              diffuse severe encephalopathy (as can be seen with heavy sedation)
+              Reviewed through (time)
+              <input type="text" id="ci-through-time"
+                     placeholder="e.g., 15:30, 17:45, or 'approximately 2 hours of recording'" />
             </label>
+
+            <div class="section-group-title">So far, results are consistent with:</div>
+            <div class="inline-options">
+              <label>
+                <input type="radio" name="ci-background" value="severeSedation" checked />
+                diffuse severe encephalopathy (as can be seen with heavy sedation)
+              </label>
+              <label>
+                <input type="radio" name="ci-background" value="diffuseEnceph" />
+                diffuse encephalopathy
+              </label>
+              <label>
+                <input type="radio" name="ci-background" value="awake" />
+                an awake patient
+              </label>
+              <label>
+                <input type="radio" name="ci-background" value="myogenic" />
+                excessive myogenic artifact without clear evidence of wakefulness or of NCSE
+              </label>
+            </div>
+
+            <div class="section-group-title">In regards to seizures / NCSE:</div>
+            <div class="inline-options" style="display:block;">
+              <label>
+                <input type="radio" name="ci-seizureStatus" value="negativeClean" checked />
+                NEGATIVE for NCSE and no overt seizures, rhythmic periodic patterns, or overt epileptiform activity have been seen
+              </label>
+              <label>
+                <input type="radio" name="ci-seizureStatus" value="negativeNotable" />
+                NEGATIVE for NCSE but notable for [findings]
+              </label>
+              <label>
+                <input type="radio" name="ci-seizureStatus" value="concernNCSE" />
+                Notable for concerns of [] which in the appropriate clinical context may represent NCSE; [team] team made aware at [time].
+              </label>
+            </div>
+
+            <!-- Free-text slots for the bracketed pieces -->
             <label>
-              <input type="radio" name="ci-background" value="diffuseEnceph" />
-              diffuse encephalopathy
+              If "NEGATIVE but notable" selected – findings:
+              <input type="text" id="ci-seizure-findings"
+                     placeholder="e.g., intermittent GRDA, LPDs over right temporal region" />
             </label>
+
             <label>
-              <input type="radio" name="ci-background" value="awake" />
-              an awake patient
+              If "concerns of []" selected – concerning finding:
+              <input type="text" id="ci-seizure-concern"
+                     placeholder="e.g., evolving right temporal rhythmic delta activity" />
             </label>
+
             <label>
-              <input type="radio" name="ci-background" value="myogenic" />
-              excessive myogenic artifact without clear evidence of wakefulness or of NCSE
+              Team notified (e.g., 'neuro ICU team'):
+              <input type="text" id="ci-team" placeholder="e.g., neuro ICU team" />
             </label>
-          </div>
-      
-          <div class="section-group-title">In regards to seizures / NCSE:</div>
-          <div class="inline-options" style="display:block;">
+
             <label>
-              <input type="radio" name="ci-seizureStatus" value="negativeClean" checked />
-              NEGATIVE for NCSE and no overt seizures, rhythmic periodic patterns, or overt epileptiform activity have been seen
+              Time team made aware:
+              <input type="text" id="ci-team-time" placeholder="e.g., 16:05" />
             </label>
-            <label>
-              <input type="radio" name="ci-seizureStatus" value="negativeNotable" />
-              NEGATIVE for NCSE but notable for [findings]
-            </label>
-            <label>
-              <input type="radio" name="ci-seizureStatus" value="concernNCSE" />
-              Notable for concerns of [] which in the appropriate clinical context may represent NCSE; [team] team made aware at [time].
-            </label>
-          </div>
-      
-          <!-- Free-text slots for the bracketed pieces -->
-          <label>
-            If "NEGATIVE but notable" selected – findings:
-            <input type="text" id="ci-seizure-findings"
-                   placeholder="e.g., intermittent GRDA, LPDs over right temporal region" />
-          </label>
-      
-          <label>
-            If "concerns of []" selected – concerning finding:
-            <input type="text" id="ci-seizure-concern"
-                   placeholder="e.g., evolving right temporal rhythmic delta activity" />
-          </label>
-      
-          <label>
-            Team notified (e.g., 'neuro ICU team'):
-            <input type="text" id="ci-team" placeholder="e.g., neuro ICU team" />
-          </label>
-      
-          <label>
-            Time team made aware:
-            <input type="text" id="ci-team-time" placeholder="e.g., 16:05" />
-          </label>
-        </fieldset>
+          </fieldset>
+        </div>
       </div>
 
     </div>
@@ -512,108 +569,114 @@
     }
 
     function nonEmptyLinesJoin(lines) {
+      // Join non-empty lines with a blank line between each
       return lines
-        .map(l => l.trim())
-        .filter(l => l.length > 0)
-        .join("\n");
+        .map(l => (l == null ? "" : String(l)))
+        .filter(l => l.trim().length > 0)
+        .join("\n\n");
+    }
+
+    function withDefault(value, defaultText = "[none]") {
+      const v = (value || "").trim();
+      return v.length ? v : defaultText;
+    }
+
+    function getAlertnessText(groupName) {
+      const key = getSelectedRadio(groupName, "awakeAsleep");
+      const map = {
+        awakeAsleep: "awake and asleep",
+        awakeDrowsy: "awake and drowsy",
+        awake: "awake",
+        confused: "confused",
+        lethargic: "lethargic",
+        obtunded: "obtunded",
+        stuporous: "stuporous",
+        comatose: "comatose"
+      };
+      return map[key] || "[none]";
+    }
+
+    function getAEDString(prefix) {
+      const selected = Array.from(
+        document.querySelectorAll(`.${prefix}-aed:checked`)
+      ).map(el => el.value);
+
+      const otherEl = document.getElementById(`${prefix}-aeds-other`);
+      const other = (otherEl ? otherEl.value : "").trim();
+
+      if (other) selected.push(other);
+
+      return selected.length ? selected.join(", ") : "[none]";
     }
 
     // --- Builder functions: VIDEO-EEG ---
 
     function buildVideoEEGProcedure() {
-      const duration = document.getElementById("vEEG-duration").value.trim();
-      const history = document.getElementById("vEEG-history").value.trim();
-      const alertness = document.getElementById("vEEG-alertness").value.trim();
-      const aeds = document.getElementById("vEEG-aeds").value.trim();
-      const artifacts = document.getElementById("vEEG-artifacts").value.trim();
+      const duration = document.getElementById("vEEG-duration").value;
+      const historyRaw = document.getElementById("vEEG-history").value;
+      const alertnessText = getAlertnessText("vEEG-alertness");
+      const aedsText = getAEDString("vEEG");
+      const artifacts = document.getElementById("vEEG-artifacts").value;
+
+      const historyText = (historyRaw || "[]").trim() || "[]";
 
       const lines = [];
 
       lines.push("Video-EEG Study Report");
-
-      if (duration) lines.push(`Study Duration: ${duration}`);
-      if (history) lines.push(`Pertinent History:\n${history}`);
-      if (alertness) lines.push(`Level of Alertness:\n${alertness}`);
-      if (aeds) lines.push(`AED/ASMs during study:\n${aeds}`);
-
+      lines.push(`Study Duration: ${withDefault(duration)}`);
+      lines.push(
+        "Pertinent History:\nAs per documentation, the patient is a " + historyText + "."
+      );
+      lines.push("Level of Alertness:\n" + alertnessText);
+      lines.push("AED/ASMs during study:\n" + aedsText);
       lines.push(
         "Technical Aspects: This video-EEG study was done with scalp electrodes positioned according to the 10–20 International system of electrode placement. Video-EEG data were recorded continuously and digitally stored."
       );
-
-      if (artifacts) {
-        lines.push(`Artifacts / Limitations:\n${artifacts}`);
-      }
+      lines.push("Artifacts / Limitations:\n" + withDefault(artifacts, "[Within expected tolerances]"));
 
       return nonEmptyLinesJoin(lines);
     }
 
     function buildVideoEEGFindings() {
-      const background = document.getElementById("vEEG-background").value.trim();
-      const slowing = document.getElementById("vEEG-slowing").value.trim();
-      const interictal = document.getElementById("vEEG-interictal").value.trim();
-      const ictal = document.getElementById("vEEG-ictal").value.trim();
-      const other = document.getElementById("vEEG-other").value.trim();
-      const sleep = document.getElementById("vEEG-sleep").value.trim();
-      const hv = document.getElementById("vEEG-hv").value.trim();
-      const photic = document.getElementById("vEEG-photic").value.trim();
+      const background = document.getElementById("vEEG-background").value;
+      const slowing = document.getElementById("vEEG-slowing").value;
+      const interictal = document.getElementById("vEEG-interictal").value;
+      const ictal = document.getElementById("vEEG-ictal").value;
+      const other = document.getElementById("vEEG-other").value;
+      const sleep = document.getElementById("vEEG-sleep").value;
+      const hv = document.getElementById("vEEG-hv").value;
+      const photic = document.getElementById("vEEG-photic").value;
 
-      const blocks = [];
+      const lines = [];
 
-      const bgLines = [];
-      bgLines.push("EEG Findings");
-      if (background) {
-        bgLines.push("Background:");
-        bgLines.push(background);
-      }
-      if (slowing) {
-        bgLines.push("");
-        bgLines.push("Slowing:");
-        bgLines.push(slowing);
-      }
-      blocks.push(nonEmptyLinesJoin(bgLines));
+      lines.push("EEG Findings");
+      lines.push("Background:");
+      lines.push(withDefault(background));
+      lines.push("Slowing:");
+      lines.push(withDefault(slowing));
 
-      const epLines = [];
-      if (interictal || ictal || other) {
-        epLines.push("Epileptiform Activity");
-        if (interictal) {
-          epLines.push("Interictal epileptiform activity:");
-          epLines.push(interictal);
-        }
-        if (ictal) {
-          if (epLines.length) epLines.push("");
-          epLines.push("Ictal activity:");
-          epLines.push(ictal);
-        }
-        if (other) {
-          epLines.push("");
-          epLines.push("Other findings / artifacts:");
-          epLines.push(other);
-        }
-        blocks.push(nonEmptyLinesJoin(epLines));
-      }
+      lines.push("Epileptiform Activity");
+      lines.push("Interictal epileptiform activity:");
+      lines.push(withDefault(interictal));
+      lines.push("Ictal activity:");
+      lines.push(withDefault(ictal));
+      lines.push("Other findings / artifacts:");
+      lines.push(withDefault(other));
 
-      const sleepLines = [];
-      if (sleep) {
-        sleepLines.push("Sleep Recordings");
-        sleepLines.push(sleep);
-        blocks.push(nonEmptyLinesJoin(sleepLines));
-      }
+      lines.push("Sleep Recordings");
+      lines.push(withDefault(sleep));
 
-      const actLines = [];
-      if (hv || photic) {
-        actLines.push("Activation Procedures");
-        if (hv) actLines.push(hv);
-        if (photic) actLines.push(photic);
-        blocks.push(nonEmptyLinesJoin(actLines));
-      }
+      lines.push("Activation Procedures");
+      lines.push(withDefault(hv));
+      lines.push(withDefault(photic));
 
-      return blocks.filter(b => b.trim().length > 0).join("\n\n");
+      return nonEmptyLinesJoin(lines);
     }
 
     function buildVideoEEGImpression() {
       const type = getSelectedRadio("vEEG-impression-type", "normal");
-      const abnormal = document.getElementById("vEEG-impression-abnormal").value.trim();
-      const comment = document.getElementById("vEEG-impression-comment").value.trim();
+      const abnormal = document.getElementById("vEEG-impression-abnormal").value;
+      const comment = document.getElementById("vEEG-impression-comment").value;
 
       const lines = [];
       lines.push("EEG Impression");
@@ -623,14 +686,10 @@
           "This EEG study was within normal limits in awake and/or sleep states as recorded. No seizures nor epileptiform discharges were seen."
         );
       } else {
-        if (abnormal) {
-          lines.push("This EEG study was abnormal due to:");
-          lines.push(abnormal);
-        }
-        if (comment) {
-          lines.push("");
-          lines.push(comment);
-        }
+        lines.push("This EEG study was abnormal due to:");
+        lines.push(withDefault(abnormal));
+        lines.push("Additional comment:");
+        lines.push(withDefault(comment));
       }
 
       return nonEmptyLinesJoin(lines);
@@ -639,148 +698,125 @@
     // --- Builder functions: CERIBELL ---
 
     function buildCeribellProcedure() {
-      const time = document.getElementById("c-time").value.trim();
-      const history = document.getElementById("c-history").value.trim();
-      const aeds = document.getElementById("c-aeds").value.trim();
+      const time = document.getElementById("c-time").value;
+      const historyRaw = document.getElementById("c-history").value;
+      const alertnessText = getAlertnessText("c-alertness");
+      const aedsText = getAEDString("c");
+
+      const historyText = (historyRaw || "[]").trim() || "[]";
 
       const lines = [];
       lines.push("Ceribell Rapid EEG Study Report");
-
-      if (time) lines.push(`Time Parameters:\n${time}`);
-      if (history) lines.push(`Pertinent History:\n${history}`);
-      if (aeds) lines.push(`AEDs/ASMs during study:\n${aeds}`);
-
+      lines.push("Time Parameters:\n" + withDefault(time));
       lines.push(
-        "Technical Aspects: This rapid EEG study was performed using a 10-lead, 8-channel system (Ceribell) positioned circumferentially and recorded in a bipolar montage, with EEG channels corresponding approximately to the Fp1–F7, F7–T3, T3–T5, and T5–O1 sites on the left and the Fp2–F8, F8–T4, T4–T6, and T6–O2 sites on the right according to the International 10–20 System. There was no coverage of parasagittal electrode sites. Data were acquired digitally at a sampling rate of 250 Hz with a frequency response of 0.5–100 Hz. The entirety of the study was reviewed. In addition, findings and events identified by a proprietary decision support algorithm were reviewed."
+        "Pertinent History:\nAs per documentation, the patient is a " + historyText + "."
+      );
+      lines.push("Level of Alertness:\n" + alertnessText);
+      lines.push("AEDs/ASMs during study:\n" + aedsText);
+      lines.push(
+        "Technical Aspects: This rapid EEG study was performed using a 10-lead, 8-channel system (Ceribell) positioned circumferentially and recorded in a bipolar montage, with EEG channels corresponding approximately to the Fp1–F7, F7–T3, T3–T5, and T5–O1 sites on the left and the Fp2–F8, F8–T4, T4–T6, and T6–O2 sites on the right according to the International 10–20 System. There was no coverage of parasagittal electrode sites. Data were acquired digitally at a sampling rate of 250 Hz with a frequency response of 0.5–100 Hz. The entirety of the study was reviewed. In addition, findings and events identified by a proprietary decision support algorithm (ClarityPro) were reviewed."
       );
 
       return nonEmptyLinesJoin(lines);
     }
 
     function buildCeribellFindings() {
-      const background = document.getElementById("c-background").value.trim();
-      const interictal = document.getElementById("c-interictal").value.trim();
-      const rp = document.getElementById("c-rp").value.trim();
-      const ictal = document.getElementById("c-ictal").value.trim();
-      const other = document.getElementById("c-other").value.trim();
-
-      const blocks = [];
-
-      const bgLines = [];
-      bgLines.push("Ceribell Findings");
-      if (background) {
-        bgLines.push("Background activity:");
-        bgLines.push(background);
-      }
-      blocks.push(nonEmptyLinesJoin(bgLines));
-
-      const epLines = [];
-      if (interictal || rp || ictal || other) {
-        if (interictal) {
-          epLines.push("Interictal epileptiform activity:");
-          epLines.push(interictal);
-        }
-        if (rp) {
-          if (epLines.length) epLines.push("");
-          epLines.push("Rhythmic / periodic patterns:");
-          epLines.push(rp);
-        }
-        if (ictal) {
-          if (epLines.length) epLines.push("");
-          epLines.push("Ictal activity:");
-          epLines.push(ictal);
-        }
-        if (other) {
-          epLines.push("");
-          epLines.push("Other events / artifacts:");
-          epLines.push(other);
-        }
-        blocks.push(nonEmptyLinesJoin(epLines));
-      }
-
-      return blocks.filter(b => b.trim().length > 0).join("\n\n");
-    }
-
-    function buildCeribellImpression() {
-      const main = document.getElementById("c-impression-main").value.trim();
-      const comment = document.getElementById("c-impression-comment").value.trim();
-      const disclaimer = document.getElementById("c-disclaimer").value.trim();
+      const background = document.getElementById("c-background").value;
+      const interictal = document.getElementById("c-interictal").value;
+      const rp = document.getElementById("c-rp").value;
+      const ictal = document.getElementById("c-ictal").value;
+      const other = document.getElementById("c-other").value;
 
       const lines = [];
-      lines.push("Ceribell Impression");
 
-      if (main) lines.push(main);
-      if (comment) {
-        lines.push("");
-        lines.push(comment);
-      }
-      if (disclaimer) {
-        lines.push("");
-        lines.push(disclaimer);
-      }
+      lines.push("Ceribell Findings");
+      lines.push("Background activity:");
+      lines.push(withDefault(background));
+      lines.push("Interictal epileptiform activity:");
+      lines.push(withDefault(interictal));
+      lines.push("Rhythmic / periodic patterns:");
+      lines.push(withDefault(rp));
+      lines.push("Ictal activity:");
+      lines.push(withDefault(ictal));
+      lines.push("Other events / artifacts:");
+      lines.push(withDefault(other));
 
       return nonEmptyLinesJoin(lines);
     }
 
-    function buildCeribellInterim() {
+    function buildCeribellImpression() {
+      const main = document.getElementById("c-impression-main").value;
+      const comment = document.getElementById("c-impression-comment").value;
+      const disclaimer = document.getElementById("c-disclaimer").value;
+
+      const lines = [];
+      lines.push("Ceribell Impression");
+      lines.push(withDefault(main));
+      lines.push("Additional comment:");
+      lines.push(withDefault(comment));
+      lines.push("Limited montage / follow-up comment:");
+      lines.push(withDefault(disclaimer));
+
+      return nonEmptyLinesJoin(lines);
+    }
+
+    // Ceribell Interim; includeHeader = true when it's the ONLY Ceribell section used
+    function buildCeribellInterim(includeHeader) {
       const through = document.getElementById("ci-through-time").value.trim();
-    
+
       const bgKey = getSelectedRadio("ci-background", "severeSedation");
       const seizureKey = getSelectedRadio("ci-seizureStatus", "negativeClean");
-    
+
       const findings = document.getElementById("ci-seizure-findings").value.trim();
       const concern = document.getElementById("ci-seizure-concern").value.trim();
       const team = document.getElementById("ci-team").value.trim();
       const notifyTime = document.getElementById("ci-team-time").value.trim();
-    
-      // Map background radios to phrases
+
       const bgMap = {
         severeSedation: "diffuse severe encephalopathy (as can be seen with heavy sedation)",
         diffuseEnceph: "diffuse encephalopathy",
         awake: "an awake patient",
         myogenic: "excessive myogenic artifact without clear evidence of wakefulness or of NCSE"
       };
-    
-      // Map seizures radios to sentences
+
       let seizureSentence = "";
       if (seizureKey === "negativeClean") {
         seizureSentence =
           "NEGATIVE for NCSE and no overt seizures, rhythmic periodic patterns, or overt epileptiform activity have been seen.";
       } else if (seizureKey === "negativeNotable") {
-        const f = findings || "other EEG abnormalities as described above";
+        const f = findings || "[findings]";
         seizureSentence = `NEGATIVE for NCSE but notable for ${f}.`;
       } else if (seizureKey === "concernNCSE") {
         const c = concern || "electrographic abnormalities";
-        const t = team || "the treating team";
-        const timePhrase = notifyTime ? ` at ${notifyTime}` : "";
+        const t = team || "[team]";
+        const timePhrase = notifyTime ? ` at ${notifyTime}` : " at [time]";
         seizureSentence =
           `Notable for concerns of ${c} which in the appropriate clinical context may represent NCSE; ` +
           `${t} made aware${timePhrase}.`;
       }
-    
+
       const lines = [];
-    
-      lines.push('Ceribell "Rapid EEG" Study Report');
-      lines.push('---------------------------------');
-      lines.push("");
-    
+
+      if (includeHeader) {
+        lines.push('Ceribell "Rapid EEG" Study Report');
+        lines.push('---------------------------------');
+      }
+
       const timePart = through ? ` through ${through}` : "";
       lines.push(`INTERIM UPDATE: Initial portions of study reviewed${timePart}.`);
-    
+
       const bgPhrase = bgMap[bgKey];
       if (bgPhrase) {
-        lines.push("");
         lines.push(`So far, results are consistent with ${bgPhrase}.`);
       }
-    
+
       if (seizureSentence) {
-        lines.push("");
         lines.push(`In regards to seizures / NCSE: ${seizureSentence}`);
       }
-    
+
       return nonEmptyLinesJoin(lines);
     }
-    
+
     // --- Main build function ---
 
     function buildOutput() {
@@ -788,6 +824,7 @@
       const includeProcedure = document.getElementById("includeProcedure").checked;
       const includeFindings = document.getElementById("includeFindings").checked;
       const includeImpression = document.getElementById("includeImpression").checked;
+      const includeCeribellInterim = document.getElementById("includeCeribellInterim").checked;
 
       const blocks = [];
 
@@ -795,26 +832,25 @@
         if (includeProcedure)  blocks.push(buildVideoEEGProcedure());
         if (includeFindings)   blocks.push(buildVideoEEGFindings());
         if (includeImpression) blocks.push(buildVideoEEGImpression());
-      } else if (studyType === "ceribellInterim") {
-        // For interim updates, ignore the section checkboxes and just build the focused interim text
-        blocks.push(buildCeribellInterim());
       } else {
-        // Standard Ceribell full report
+        // Ceribell
+        const anyMainCeribellSections = includeProcedure || includeFindings || includeImpression;
+
         if (includeProcedure)  blocks.push(buildCeribellProcedure());
         if (includeFindings)   blocks.push(buildCeribellFindings());
         if (includeImpression) blocks.push(buildCeribellImpression());
-      }
 
+        if (includeCeribellInterim) {
+          // Include header only if Interim is the *only* Ceribell section
+          blocks.push(buildCeribellInterim(!anyMainCeribellSections));
+        }
+      }
 
       document.getElementById("output").value = blocks
         .filter(b => b.trim().length > 0)
         .join("\n\n");
     }
 
-
-
-
-    
     // --- Copy to clipboard ---
 
     async function copyOutput() {
@@ -845,23 +881,15 @@
       const studyType = getSelectedRadio("studyType", "videoEEG");
       const v = document.getElementById("videoEEG-options");
       const c = document.getElementById("ceribell-options");
-      const ci = document.getElementById("ceribell-interim-options");
-    
+
       if (studyType === "videoEEG") {
         v.classList.remove("hidden");
         c.classList.add("hidden");
-        ci.classList.add("hidden");
-      } else if (studyType === "ceribell") {
+      } else {
         v.classList.add("hidden");
         c.classList.remove("hidden");
-        ci.classList.add("hidden");
-      } else if (studyType === "ceribellInterim") {
-        v.classList.add("hidden");
-        c.classList.add("hidden");
-        ci.classList.remove("hidden");
       }
     }
-
 
     function init() {
       // Study type switching
@@ -875,6 +903,13 @@
       // Default disclaimer text for Ceribell
       document.getElementById("c-disclaimer").value =
         "Of note, this study was performed using a rapid EEG system with a limited circumferential montage as detailed above. Depending on persistent clinical concerns for seizures, a standard or prolonged video-EEG study may be warranted.";
+
+      // Default history brackets so they’re ready to edit
+      document.getElementById("vEEG-history").value = "[]";
+      document.getElementById("c-history").value = "[]";
+
+      // Default artifacts text for Video-EEG
+      document.getElementById("vEEG-artifacts").value = "[Within expected tolerances]";
 
       updateStudyTypeVisibility();
       buildOutput(); // initial skeleton
