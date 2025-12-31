@@ -808,12 +808,13 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
       lines.push("EPILEPTIFORM ACTIVITY");
       lines.push("Interictal epileptiform activity:\n" + withDefault(interictal));
       lines.push("Ictal activity:\n" + withDefault(ictal));
+      lines.push("OTHER FINDINGS");
       lines.push("Other findings / artifacts:\n" + withDefault(other));
 
-      lines.push("Sleep Recordings\n-----------------------\n" + withDefault(sleep));
+      lines.push("Sleep Recordings:\n" + withDefault(sleep));
 
       lines.push(
-        "Activation Procedures\n-----------------------\n" +
+        "Activation Procedures:\n" +
         withDefault(hv) + "\n" + withDefault(photic)
       );
 
