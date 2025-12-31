@@ -776,11 +776,11 @@
     // --- Builder functions: VIDEO-EEG ---
 
     function buildVideoEEGProcedure() {
-      const duration = document.getElementById("vEEG-duration").value;
-      const historyRaw = document.getElementById("vEEG-history").value;
+      const duration   = document.getElementById("vEEG-duration").value.trim();
+      const historyRaw = document.getElementById("vEEG-history").value.trim();
       const alertnessText = getAlertnessText("vEEG-alertness");
-      const aedsText = getAEDString("vEEG");
-      const artifacts = document.getElementById("vEEG-artifacts").value;
+      const aedsText      = getAEDString("vEEG");
+      const artifacts  = document.getElementById("vEEG-artifacts").value.trim();
 
       const historyText = (historyRaw || "[]").trim() || "[]";
 
@@ -802,14 +802,14 @@
     }
 
     function buildVideoEEGFindings() {
-      const background = document.getElementById("vEEG-background").value;
-      const slowing = document.getElementById("vEEG-slowing").value;
-      const interictal = document.getElementById("vEEG-interictal").value;
-      const ictal = document.getElementById("vEEG-ictal").value;
-      const other = document.getElementById("vEEG-other").value;
-      const sleep = document.getElementById("vEEG-sleep").value;
-      const hv = document.getElementById("vEEG-hv").value;
-      const photic = document.getElementById("vEEG-photic").value;
+      const background = document.getElementById("vEEG-background").value.trim();
+      const slowing    = document.getElementById("vEEG-slowing").value.trim();
+      const interictal = document.getElementById("vEEG-interictal").value.trim();
+      const ictal      = document.getElementById("vEEG-ictal").value.trim();
+      const other      = document.getElementById("vEEG-other").value.trim();
+      const sleep      = document.getElementById("vEEG-sleep").value.trim();
+      const hv         = document.getElementById("vEEG-hv").value.trim();
+      const photic     = document.getElementById("vEEG-photic").value.trim();
 
       const lines = [];
 
@@ -824,15 +824,18 @@
 
       lines.push("Sleep Recordings\n-----------------------\n" + withDefault(sleep));
 
-      lines.push("Activation Procedures\n-----------------------\n" + withDefault(hv) + "\n" + withDefault(photic));
+      lines.push(
+        "Activation Procedures\n-----------------------\n" +
+        withDefault(hv) + "\n" + withDefault(photic)
+      );
 
       return nonEmptyLinesJoin(lines);
     }
 
     function buildVideoEEGImpression() {
-      const type = getSelectedRadio("vEEG-impression-type", "normal");
-      const abnormal = document.getElementById("vEEG-impression-abnormal").value;
-      const comment = document.getElementById("vEEG-impression-comment").value;
+      const type     = getSelectedRadio("vEEG-impression-type", "normal");
+      const abnormal = document.getElementById("vEEG-impression-abnormal").value.trim();
+      const comment  = document.getElementById("vEEG-impression-comment").value.trim();
 
       const lines = [];
       lines.push("EEG Impression\n-----------------------");
@@ -841,7 +844,8 @@
         const normalState = getSelectedRadio("vEEG-normal-state", "awakeSleep");
         let text = "";
         if (normalState === "awakeSleep") {
-          text = "This EEG study was essentially within normal limits in awake and sleep states; no seizures nor epileptiform activity were seen.";
+          text =
+            "This EEG study was essentially within normal limits in awake and sleep states; no seizures nor epileptiform activity were seen.";
         } else if (normalState === "awakeDrowsy") {
           text =
             "This EEG study was essentially within normal limits in awake and drowsy states; no seizures nor epileptiform activity were seen.\n\n" +
@@ -856,7 +860,7 @@
       } else {
         lines.push("This EEG study was abnormal due to:\n" + withDefault(abnormal));
 
-        let commentText = (comment || "").trim();
+        let commentText = comment;
         if (commentText) {
           if (!/^These findings are consistent with/i.test(commentText)) {
             commentText = "These findings are consistent with " + commentText;
@@ -874,10 +878,10 @@
     // --- Builder functions: CERIBELL ---
 
     function buildCeribellProcedure() {
-      const time = document.getElementById("c-time").value;
-      const historyRaw = document.getElementById("c-history").value;
+      const time      = document.getElementById("c-time").value.trim();
+      const historyRaw = document.getElementById("c-history").value.trim();
       const alertnessText = getAlertnessText("c-alertness");
-      const aedsText = getAEDString("c");
+      const aedsText      = getAEDString("c");
 
       const historyText = (historyRaw || "[]").trim() || "[]";
 
@@ -897,11 +901,11 @@
     }
 
     function buildCeribellFindings() {
-      const background = document.getElementById("c-background").value;
-      const interictal = document.getElementById("c-interictal").value;
-      const rp = document.getElementById("c-rp").value;
-      const ictal = document.getElementById("c-ictal").value;
-      const other = document.getElementById("c-other").value;
+      const background = document.getElementById("c-background").value.trim();
+      const interictal = document.getElementById("c-interictal").value.trim();
+      const rp        = document.getElementById("c-rp").value.trim();
+      const ictal     = document.getElementById("c-ictal").value.trim();
+      const other     = document.getElementById("c-other").value.trim();
 
       const lines = [];
 
@@ -916,15 +920,15 @@
     }
 
     function buildCeribellImpression() {
-      const main = document.getElementById("c-impression-main").value;
-      const comment = document.getElementById("c-impression-comment").value;
-      const disclaimer = document.getElementById("c-disclaimer").value;
+      const main       = document.getElementById("c-impression-main").value.trim();
+      const comment    = document.getElementById("c-impression-comment").value.trim();
+      const disclaimer = document.getElementById("c-disclaimer").value.trim();
 
       const lines = [];
       lines.push("Ceribell Impression\n-----------------------");
       lines.push(withDefault(main));
 
-      let commentText = (comment || "").trim();
+      let commentText = comment;
       if (commentText) {
         if (!/^These findings are consistent with/i.test(commentText)) {
           commentText = "These findings are consistent with " + commentText;
@@ -939,16 +943,15 @@
       return nonEmptyLinesJoin(lines);
     }
 
-    // Ceribell Interim; includeHeader = true when it's the ONLY Ceribell section used
     function buildCeribellInterim(includeHeader) {
       const through = document.getElementById("ci-through-time").value.trim();
 
-      const bgKey = getSelectedRadio("ci-background", "severeSedation");
+      const bgKey      = getSelectedRadio("ci-background", "severeSedation");
       const seizureKey = getSelectedRadio("ci-seizureStatus", "negativeClean");
 
-      const findings = document.getElementById("ci-seizure-findings").value.trim();
-      const concern = document.getElementById("ci-seizure-concern").value.trim();
-      const team = document.getElementById("ci-team").value.trim();
+      const findings   = document.getElementById("ci-seizure-findings").value.trim();
+      const concern    = document.getElementById("ci-seizure-concern").value.trim();
+      const team       = document.getElementById("ci-team").value.trim();
       const notifyTime = document.getElementById("ci-team-time").value.trim();
 
       const bgMap = {
