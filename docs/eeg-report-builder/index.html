@@ -98,10 +98,10 @@
       transform: scale(0.98);
     }
 
-    /* OUTPUT AREA: editable, wrapped, light green-beige */
-    #output {
+    /* OUTPUT AREAS: editable, wrapped, light green-beige */
+    .output-area {
       width: 100%;
-      min-height: 450px;
+      min-height: 140px;
       resize: vertical;
       padding: 0.75rem;
       font-family: "SF Mono", Menlo, Consolas, monospace;
@@ -110,10 +110,15 @@
       border: 1px solid #b5c2a8;
       background: #f3f6e8;
       color: #000;
-      white-space: pre-wrap;  /* preserve line breaks + wrap */
-      word-wrap: break-word;  /* wrap long tokens */
+      white-space: pre-wrap;
+      word-wrap: break-word;
       box-sizing: border-box;
       box-shadow: 0 0 0 1px rgba(0,0,0,0.03) inset;
+      margin-bottom: 0.5rem;
+    }
+
+    #output {
+      min-height: 450px;
     }
 
     #copy-status {
@@ -132,6 +137,42 @@
 
     .hidden {
       display: none;
+    }
+
+    .output-block {
+      margin-bottom: 1rem;
+    }
+
+    /* Snippets */
+    #snippets {
+      margin-top: 1.25rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #ddd;
+    }
+    #snippets h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+    .snippet {
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 0.7rem;
+      margin-bottom: 0.5rem;
+      background: #ffffff;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .snippet-text {
+      flex: 1;
+    }
+    .snippet button {
+      white-space: nowrap;
+      padding-inline: 0.7rem;
+      font-size: 0.8rem;
     }
 
     @media (max-width: 900px) {
@@ -153,6 +194,24 @@
   <div class="container">
     <!-- LEFT: controls -->
     <div>
+
+      <!-- Output mode -->
+      <fieldset>
+        <legend>Output Mode</legend>
+        <div class="inline-options">
+          <label>
+            <input type="radio" name="outputMode" value="single" checked />
+            Single section output (combined note)
+          </label>
+          <label>
+            <input type="radio" name="outputMode" value="multi" />
+            Multi-section output (separate boxes)
+          </label>
+        </div>
+        <p class="small">
+          Multi-section mode generates separate Procedure, Findings, and Impression text areas, each with its own copy button.
+        </p>
+      </fieldset>
 
       <!-- Study type -->
       <fieldset>
@@ -359,6 +418,13 @@
             </label>
           </div>
 
+          <div class="section-group-title">If normal – states captured</div>
+          <div class="inline-options" style="flex-wrap: wrap;">
+            <label><input type="radio" name="vEEG-normal-state" value="awakeSleep" checked /> awake and sleep</label>
+            <label><input type="radio" name="vEEG-normal-state" value="awakeDrowsy" /> awake and drowsy</label>
+            <label><input type="radio" name="vEEG-normal-state" value="awakeOnly" /> awake only</label>
+          </div>
+
           <label>
             If abnormal – key abnormal findings
             <textarea id="vEEG-impression-abnormal" class="template-input"
@@ -366,9 +432,9 @@
           </label>
 
           <label>
-            Consistent with / Comment
+            Interpretation comment
             <textarea id="vEEG-impression-comment" class="template-input"
-              placeholder="e.g., These findings are consistent with increased risk of focal seizures arising from the left temporal region."></textarea>
+              placeholder="e.g., increased risk of focal seizures arising from the left temporal region."></textarea>
           </label>
         </fieldset>
       </div>
@@ -454,9 +520,9 @@
               placeholder="e.g., This Ceribell study was notable for ... or This Ceribell study showed no seizures, sustained rhythmic periodic patterns, or overt epileptiform activity."></textarea>
           </label>
           <label>
-            Consistent with / Comment
+            Interpretation comment
             <textarea id="c-impression-comment" class="template-input"
-              placeholder="e.g., These findings are consistent with ..."></textarea>
+              placeholder="e.g., increased risk of focal seizures arising from the left temporal region."></textarea>
           </label>
           <label>
             Limited montage disclaimer (optional)
@@ -547,15 +613,107 @@
 
     <!-- RIGHT: output -->
     <div>
-      <div class="output-header">
-        <strong>Generated Report</strong>
-        <div class="output-buttons">
-          <button id="generate-btn" type="button">Generate</button>
-          <button id="copy-btn" type="button" class="secondary">Copy</button>
+      <!-- Single-output wrapper -->
+      <div id="single-output-wrapper">
+        <div class="output-header">
+          <strong>Generated Report (Single Section)</strong>
+          <div class="output-buttons">
+            <button id="generate-btn" type="button">Generate</button>
+            <button id="copy-btn" type="button" class="secondary">Copy</button>
+          </div>
+        </div>
+        <textarea id="output" class="output-area"></textarea>
+      </div>
+
+      <!-- Multi-output wrapper -->
+      <div id="multi-output-wrapper" class="hidden">
+        <div class="output-header">
+          <strong>Generated Report (Multi-Section)</strong>
+          <button id="generate-btn-multi" type="button">Generate</button>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">
+            <strong>Procedure / Context</strong>
+            <button type="button" class="secondary" onclick="copySpecificOutput('output-procedure')">Copy</button>
+          </div>
+          <textarea id="output-procedure" class="output-area"></textarea>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">
+            <strong>Findings</strong>
+            <button type="button" class="secondary" onclick="copySpecificOutput('output-findings')">Copy</button>
+          </div>
+          <textarea id="output-findings" class="output-area"></textarea>
+        </div>
+
+        <div class="output-block">
+          <div class="output-header">
+            <strong>Impression</strong>
+            <button type="button" class="secondary" onclick="copySpecificOutput('output-impression')">Copy</button>
+          </div>
+          <textarea id="output-impression" class="output-area"></textarea>
         </div>
       </div>
-      <textarea id="output"></textarea>
+
       <p id="copy-status"></p>
+
+      <!-- Snippets -->
+      <div id="snippets">
+        <h3>Snippets</h3>
+
+        <div class="snippet">
+          <div class="snippet-text">
+            cortical hyperexcitability, associated with an in increased risk of seizures
+          </div>
+          <button type="button" class="secondary"
+                  onclick="copySnippet('cortical hyperexcitability, associated with an in increased risk of seizures')">
+            Copy
+          </button>
+        </div>
+
+        <div class="snippet">
+          <div class="snippet-text">
+            depending on clinical considerations, consider prolonged EEG to capture deeper sleep states
+          </div>
+          <button type="button" class="secondary"
+                  onclick="copySnippet('depending on clinical considerations, consider prolonged EEG to capture deeper sleep states')">
+            Copy
+          </button>
+        </div>
+
+        <div class="snippet">
+          <div class="snippet-text">
+            triphasic wave discharges were seen, with triphasic morphology, variable bifrontal predominant distribution, anterior-to-posterior lag, and spontaneous waxing and waning
+          </div>
+          <button type="button" class="secondary"
+                  onclick="copySnippet('triphasic wave discharges were seen, with triphasic morphology, variable bifrontal predominant distribution, anterior-to-posterior lag, and spontaneous waxing and waning')">
+            Copy
+          </button>
+        </div>
+
+        <div class="snippet">
+          <div class="snippet-text">
+            triphasic wave discharges represent a nonspecific finding commonly seen in the setting of toxic-metabolic encephalopathies but which are not specific to a given etiology
+          </div>
+          <button type="button" class="secondary"
+                  onclick="copySnippet('triphasic wave discharges represent a nonspecific finding commonly seen in the setting of toxic-metabolic encephalopathies but which are not specific to a given etiology')">
+            Copy
+          </button>
+        </div>
+
+        <div class="snippet">
+          <div class="snippet-text">
+            No seizures nor epileptiform activity were seen throughout the study.
+          </div>
+          <button type="button" class="secondary"
+                  onclick="copySnippet('No seizures nor epileptiform activity were seen throughout the study.')">
+            Copy
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -568,8 +726,8 @@
       return defaultValue;
     }
 
+    // Join non-empty blocks with a blank line between each
     function nonEmptyLinesJoin(lines) {
-      // Join non-empty lines with a blank line between each
       return lines
         .map(l => (l == null ? "" : String(l)))
         .filter(l => l.trim().length > 0)
@@ -622,8 +780,8 @@
 
       const lines = [];
 
-      lines.push("Video-EEG Study Report");
-      lines.push(`Study Duration: ${withDefault(duration)}`);
+      lines.push("Video-EEG Study Report\n-----------------------");
+      lines.push("Study Duration:\n" + withDefault(duration));
       lines.push(
         "Pertinent History:\nAs per documentation, the patient is a " + historyText + "."
       );
@@ -649,27 +807,18 @@
 
       const lines = [];
 
-      lines.push("EEG Findings\n--------------------");
-      lines.push("Background:\n--------------------");
-      lines.push(withDefault(background));
-      lines.push("Slowing:");
-      lines.push(withDefault(slowing));
+      lines.push("EEG Findings\n-----------------------");
+      lines.push("Background:\n-----------------------\n" + withDefault(background));
+      lines.push("Slowing:\n" + withDefault(slowing));
 
-      lines.push("Epileptiform Activity\n--------------------");
-      lines.push("Interictal epileptiform activity:");
-      lines.push(withDefault(interictal));
-      lines.push("Ictal activity:");
-      lines.push(withDefault(ictal));
-      lines.push("Other\n--------");
-      lines.push("Other findings / artifacts:");
-      lines.push(withDefault(other));
+      lines.push("Epileptiform Activity\n-----------------------");
+      lines.push("Interictal epileptiform activity:\n" + withDefault(interictal));
+      lines.push("Ictal activity:\n" + withDefault(ictal));
+      lines.push("Other findings / artifacts:\n" + withDefault(other));
 
-      lines.push("Sleep Recordings");
-      lines.push(withDefault(sleep));
+      lines.push("Sleep Recordings\n-----------------------\n" + withDefault(sleep));
 
-      lines.push("Activation Procedures");
-      lines.push(withDefault(hv));
-      lines.push(withDefault(photic));
+      lines.push("Activation Procedures\n-----------------------\n" + withDefault(hv) + "\n" + withDefault(photic));
 
       return nonEmptyLinesJoin(lines);
     }
@@ -680,17 +829,37 @@
       const comment = document.getElementById("vEEG-impression-comment").value;
 
       const lines = [];
-      lines.push("EEG Impression\n--------------------");
+      lines.push("EEG Impression\n-----------------------");
 
       if (type === "normal") {
-        lines.push(
-          "This EEG study was within normal limits in awake [and drowsy] [and sleep] states as recorded. No seizures nor epileptiform discharges were seen. [Depending on clinical considerations, a prolonged study capturing deeper sleep states may merit consideration]."
-        );
+        const normalState = getSelectedRadio("vEEG-normal-state", "awakeSleep");
+        let text = "";
+        if (normalState === "awakeSleep") {
+          text = "This EEG study was essentially within normal limits in awake and sleep states; no seizures nor epileptiform activity were seen.";
+        } else if (normalState === "awakeDrowsy") {
+          text =
+            "This EEG study was essentially within normal limits in awake and drowsy states; no seizures nor epileptiform activity were seen.\n\n" +
+            "Of note, given capture of only awake and drowsy states, depending on clinical impressions, future prolonged study capturing deeper sleep states may merit consideration.";
+        } else {
+          // awakeOnly
+          text =
+            "This EEG study was essentially within normal limits in the awake state; no seizures nor epileptiform activity were seen.\n\n" +
+            "Of note, given capture of only the awake state, depending on clinical impressions, future prolonged study capturing deeper sleep states may merit consideration.";
+        }
+        lines.push(text);
       } else {
-        lines.push("This EEG study was abnormal due to:");
-        lines.push(withDefault(abnormal));
-        lines.push("Interpretation comment:");
-        lines.push(withDefault(comment));
+        lines.push("This EEG study was abnormal due to:\n" + withDefault(abnormal));
+
+        let commentText = (comment || "").trim();
+        if (commentText) {
+          if (!/^These findings are consistent with/i.test(commentText)) {
+            commentText = "These findings are consistent with " + commentText;
+          }
+        } else {
+          commentText = "These findings are consistent with [].";
+        }
+
+        lines.push("Interpretation comment:\n" + commentText);
       }
 
       return nonEmptyLinesJoin(lines);
@@ -730,17 +899,12 @@
 
       const lines = [];
 
-      lines.push("Ceribell Findings\n--------------------");
-      lines.push("Background activity:");
-      lines.push(withDefault(background));
-      lines.push("Interictal epileptiform activity:");
-      lines.push(withDefault(interictal));
-      lines.push("Rhythmic / periodic patterns:");
-      lines.push(withDefault(rp));
-      lines.push("Ictal activity:");
-      lines.push(withDefault(ictal));
-      lines.push("Other events / artifacts:");
-      lines.push(withDefault(other));
+      lines.push("Ceribell Findings\n-----------------------");
+      lines.push("Background activity:\n" + withDefault(background));
+      lines.push("Interictal epileptiform activity:\n" + withDefault(interictal));
+      lines.push("Rhythmic / periodic patterns:\n" + withDefault(rp));
+      lines.push("Ictal activity:\n" + withDefault(ictal));
+      lines.push("Other events / artifacts:\n" + withDefault(other));
 
       return nonEmptyLinesJoin(lines);
     }
@@ -751,12 +915,20 @@
       const disclaimer = document.getElementById("c-disclaimer").value;
 
       const lines = [];
-      lines.push("Ceribell Impression\n--------------------");
+      lines.push("Ceribell Impression\n-----------------------");
       lines.push(withDefault(main));
-      lines.push("Additional comment:");
-      lines.push(withDefault(comment));
-      lines.push("Limited montage / follow-up comment:");
-      lines.push(withDefault(disclaimer));
+
+      let commentText = (comment || "").trim();
+      if (commentText) {
+        if (!/^These findings are consistent with/i.test(commentText)) {
+          commentText = "These findings are consistent with " + commentText;
+        }
+      } else {
+        commentText = "These findings are consistent with [].";
+      }
+
+      lines.push("Interpretation comment:\n" + commentText);
+      lines.push("Limited montage / follow-up comment:\n" + withDefault(disclaimer));
 
       return nonEmptyLinesJoin(lines);
     }
@@ -818,9 +990,9 @@
       return nonEmptyLinesJoin(lines);
     }
 
-    // --- Main build function ---
+    // --- Output building by mode ---
 
-    function buildOutput() {
+    function buildOutputSingle() {
       const studyType = getSelectedRadio("studyType", "videoEEG");
       const includeProcedure = document.getElementById("includeProcedure").checked;
       const includeFindings = document.getElementById("includeFindings").checked;
@@ -834,7 +1006,6 @@
         if (includeFindings)   blocks.push(buildVideoEEGFindings());
         if (includeImpression) blocks.push(buildVideoEEGImpression());
       } else {
-        // Ceribell
         const anyMainCeribellSections = includeProcedure || includeFindings || includeImpression;
 
         if (includeProcedure)  blocks.push(buildCeribellProcedure());
@@ -842,7 +1013,6 @@
         if (includeImpression) blocks.push(buildCeribellImpression());
 
         if (includeCeribellInterim) {
-          // Include header only if Interim is the *only* Ceribell section
           blocks.push(buildCeribellInterim(!anyMainCeribellSections));
         }
       }
@@ -852,13 +1022,57 @@
         .join("\n\n");
     }
 
-    // --- Copy to clipboard ---
+    function buildOutputMulti() {
+      const studyType = getSelectedRadio("studyType", "videoEEG");
+      const includeProcedure = document.getElementById("includeProcedure").checked;
+      const includeFindings = document.getElementById("includeFindings").checked;
+      const includeImpression = document.getElementById("includeImpression").checked;
+      const includeCeribellInterim = document.getElementById("includeCeribellInterim").checked;
 
-    async function copyOutput() {
-      const out = document.getElementById("output");
+      let procText = "";
+      let findText = "";
+      let imprText = "";
+
+      if (studyType === "videoEEG") {
+        if (includeProcedure) procText = buildVideoEEGProcedure();
+        if (includeFindings)  findText = buildVideoEEGFindings();
+        if (includeImpression) imprText = buildVideoEEGImpression();
+      } else {
+        const anyMainCeribellSections = includeProcedure || includeFindings || includeImpression;
+
+        if (includeProcedure) procText = buildCeribellProcedure();
+        if (includeFindings)  findText = buildCeribellFindings();
+        if (includeImpression) imprText = buildCeribellImpression();
+
+        if (includeCeribellInterim) {
+          const interimText = buildCeribellInterim(!anyMainCeribellSections);
+          // Attach interim update to Findings section
+          if (findText.trim()) {
+            findText = findText + "\n\n" + interimText;
+          } else {
+            findText = interimText;
+          }
+        }
+      }
+
+      document.getElementById("output-procedure").value = procText;
+      document.getElementById("output-findings").value = findText;
+      document.getElementById("output-impression").value = imprText;
+    }
+
+    function buildOutput() {
+      const mode = getSelectedRadio("outputMode", "single");
+      if (mode === "single") {
+        buildOutputSingle();
+      } else {
+        buildOutputMulti();
+      }
+    }
+
+    // --- Copy helpers ---
+
+    async function copyTextToClipboard(text) {
       const status = document.getElementById("copy-status");
-      const text = out.value;
-
       if (!text.trim()) {
         status.textContent = "Nothing to copy yet.";
         return;
@@ -868,12 +1082,25 @@
         await navigator.clipboard.writeText(text);
         status.textContent = "Copied.";
       } catch (e) {
-        out.select();
-        document.execCommand("copy");
-        status.textContent = "Copied (fallback).";
+        // Fallback
+        status.textContent = "Copy failed.";
       }
 
       setTimeout(() => (status.textContent = ""), 2000);
+    }
+
+    async function copyOutput() {
+      const text = document.getElementById("output").value;
+      await copyTextToClipboard(text);
+    }
+
+    async function copySpecificOutput(id) {
+      const text = document.getElementById(id).value;
+      await copyTextToClipboard(text);
+    }
+
+    async function copySnippet(snippetText) {
+      await copyTextToClipboard(snippetText);
     }
 
     // --- UI wiring ---
@@ -892,13 +1119,39 @@
       }
     }
 
+    function updateOutputModeVisibility() {
+      const mode = getSelectedRadio("outputMode", "single");
+      const singleWrapper = document.getElementById("single-output-wrapper");
+      const multiWrapper = document.getElementById("multi-output-wrapper");
+
+      if (mode === "single") {
+        singleWrapper.classList.remove("hidden");
+        multiWrapper.classList.add("hidden");
+      } else {
+        singleWrapper.classList.add("hidden");
+        multiWrapper.classList.remove("hidden");
+      }
+    }
+
     function init() {
       // Study type switching
       document.querySelectorAll('input[name="studyType"]').forEach(radio => {
-        radio.addEventListener("change", updateStudyTypeVisibility);
+        radio.addEventListener("change", () => {
+          updateStudyTypeVisibility();
+          buildOutput();
+        });
+      });
+
+      // Output mode switching
+      document.querySelectorAll('input[name="outputMode"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+          updateOutputModeVisibility();
+          buildOutput();
+        });
       });
 
       document.getElementById("generate-btn").addEventListener("click", buildOutput);
+      document.getElementById("generate-btn-multi").addEventListener("click", buildOutput);
       document.getElementById("copy-btn").addEventListener("click", copyOutput);
 
       // Default disclaimer text for Ceribell
@@ -913,6 +1166,7 @@
       document.getElementById("vEEG-artifacts").value = "[Within expected tolerances]";
 
       updateStudyTypeVisibility();
+      updateOutputModeVisibility();
       buildOutput(); // initial skeleton
     }
 
