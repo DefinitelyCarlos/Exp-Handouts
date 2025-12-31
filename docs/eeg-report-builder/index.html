@@ -649,17 +649,18 @@
 
       const lines = [];
 
-      lines.push("EEG Findings");
-      lines.push("Background:");
+      lines.push("EEG Findings\n--------------------");
+      lines.push("Background:\n--------------------");
       lines.push(withDefault(background));
       lines.push("Slowing:");
       lines.push(withDefault(slowing));
 
-      lines.push("Epileptiform Activity");
+      lines.push("Epileptiform Activity\n--------------------");
       lines.push("Interictal epileptiform activity:");
       lines.push(withDefault(interictal));
       lines.push("Ictal activity:");
       lines.push(withDefault(ictal));
+      lines.push("Other\n--------");
       lines.push("Other findings / artifacts:");
       lines.push(withDefault(other));
 
@@ -679,16 +680,16 @@
       const comment = document.getElementById("vEEG-impression-comment").value;
 
       const lines = [];
-      lines.push("EEG Impression");
+      lines.push("EEG Impression\n--------------------");
 
       if (type === "normal") {
         lines.push(
-          "This EEG study was within normal limits in awake and/or sleep states as recorded. No seizures nor epileptiform discharges were seen."
+          "This EEG study was within normal limits in awake [and drowsy] [and sleep] states as recorded. No seizures nor epileptiform discharges were seen. [Depending on clinical considerations, a prolonged study capturing deeper sleep states may merit consideration]."
         );
       } else {
         lines.push("This EEG study was abnormal due to:");
         lines.push(withDefault(abnormal));
-        lines.push("Additional comment:");
+        lines.push("Interpretation comment:");
         lines.push(withDefault(comment));
       }
 
@@ -706,7 +707,7 @@
       const historyText = (historyRaw || "[]").trim() || "[]";
 
       const lines = [];
-      lines.push("Ceribell Rapid EEG Study Report");
+      lines.push("Ceribell Rapid EEG Study Report\n----------------------------------------");
       lines.push("Time Parameters:\n" + withDefault(time));
       lines.push(
         "Pertinent History:\nAs per documentation, the patient is a " + historyText + "."
@@ -729,7 +730,7 @@
 
       const lines = [];
 
-      lines.push("Ceribell Findings");
+      lines.push("Ceribell Findings\n--------------------");
       lines.push("Background activity:");
       lines.push(withDefault(background));
       lines.push("Interictal epileptiform activity:");
@@ -750,7 +751,7 @@
       const disclaimer = document.getElementById("c-disclaimer").value;
 
       const lines = [];
-      lines.push("Ceribell Impression");
+      lines.push("Ceribell Impression\n--------------------");
       lines.push(withDefault(main));
       lines.push("Additional comment:");
       lines.push(withDefault(comment));
