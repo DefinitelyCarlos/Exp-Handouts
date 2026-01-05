@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Attestation Snippets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --fg: #111827;
+      --accent: #2563eb;
+      --border: #d1d5db;
+      --button-text: #ffffff;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      padding: 1rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    .preview-container {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem;
+      align-items: stretch;
+    }
+
+    .copy-preview-btn {
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.75rem 0.9rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: var(--accent);
+      color: var(--button-text);
+      box-shadow: var(--shadow-soft);
+      white-space: nowrap;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+    }
+
+    .copy-preview-btn span.small {
+      font-size: 0.7rem;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .preview-field {
+      background: #ffffff;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .preview-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-textarea {
+      width: 100%;
+      resize: vertical;
+      border-radius: 0.5rem;
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      font-family: inherit;
+      min-height: 4.5rem; /* ~4 lines */
+      outline: none;
+    }
+
+    .preview-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+    }
+
+    .status {
+      font-size: 0.8rem;
+      color: #10b981;
+      min-height: 1em;
+    }
+
+    .snippets-container {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .snippet-button {
+      border: none;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: left;
+      cursor: pointer;
+      color: var(--button-text);
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+      min-height: 80px;
+    }
+
+    .snippet-button span.title {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .snippet-button span.subtitle {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .snippet-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    .snippet-button:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow-soft);
+      filter: brightness(0.97);
+    }
+
+    /* Unique colors per button via nth-child */
+    .snippet-button:nth-child(1) { background: #2563eb; }
+    .snippet-button:nth-child(2) { background: #16a34a; }
+    .snippet-button:nth-child(3) { background: #ea580c; }
+    .snippet-button:nth-child(4) { background: #7c3aed; }
+    .snippet-button:nth-child(5) { background: #db2777; }
+    .snippet-button:nth-child(6) { background: #0d9488; }
+    .snippet-button:nth-child(7) { background: #f59e0b; color: #111827; }
+    .snippet-button:nth-child(8) { background: #64748b; }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 0.75rem;
+      }
+
+      .preview-container {
+        grid-template-columns: 1fr;
+      }
+
+      .copy-preview-btn {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Attestation Snippets</h1>
+      <p>Click a snippet to copy it and load it into the editable preview.</p>
+    </header>
+
+    <div class="preview-container">
+      <button id="copyPreviewBtn" class="copy-preview-btn" type="button">
+        Copy<br />Preview
+        <span class="small">(to clipboard)</span>
+      </button>
+
+      <div class="preview-field">
+        <div class="preview-label">
+          <span>Preview / Scratch Pad</span>
+          <span id="currentTitle" style="font-size:0.75rem;color:#9ca3af;"></span>
+        </div>
+        <textarea
+          id="previewTextarea"
+          class="preview-textarea"
+          placeholder="Click a snippet below, or type directly here…"
+        ></textarea>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+
+    <div id="snippetsContainer" class="snippets-container">
+      <!-- Buttons will be injected by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Define all snippets here
+    const snippets = [
+      {
+        title: 'Resident Encounter',
+        text: `I saw and evaluated the patient (subsequent to and / or at the time of initial resident visit). I was present for and participated in the key portions of the history, physical examination, and medical decision making for this patient encounter. I have reviewed the residents’ documentation and agree with the assessment and plan.`
+      },
+      {
+        title: 'NP Unattended Encounter',
+        text: `I reviewed the case and documentation and discussed findings and management with the APP. I agree with the assessment and plan.`
+      },
+      {
+        title: 'NP Seen by Attending Encounter (non-CC)',
+        text: `I personally performed a substantive portion of the patient visit, including independent history taking, examination, and medical decision making (providing substantive care representing greater than 50% of total encounter time). I have reviewed and agree with the documentation provided by the NP/PA and have confirmed the assessment and plan.`
+      },
+      {
+        title: 'Critical Care Encounter',
+        text: `I personally evaluated the patient, assessed their critical illness, and provided active critical care management. I Have reviewed the documentation provided by the resident/NP/PA and agree with the assessment and plan as documented. 
+
+The patient is critically ill due to their clinical condition and is at risk for neurological deterioration. I personally spent [35] minutes caring for this critically ill patient.`
+      },
+      {
+        title: 'Stroke Alert Encounter',
+        text: `This patient was seen in the context of a stroke alert. I personally evaluated the patient, assessed their critical illness, and provided active critical care management. I Have reviewed the documentation provided by the resident/NP/PA and agree with the assessment and plan as documented. 
+
+Care provided included and was not limited to: direct confirmation of pertinent elements of history and examination, coordination of stroke team members, realtime direct preliminary review of imaging, thrombolytic decision making, assessment of candidacy for endovascular intervention, and provision of neurological impressions and recommendations in real time.
+
+Given clinical context of stroke alert at the time of the encounter the patient was presumed to be critically ill and at risk for neurological deterioration, leading to provision of direct and immediate care at the exclusion of other activities. I personally spent [35] minutes providing care for this critically ill patient during this encounter.`
+      },
+      {
+        title: 'Telestroke Encounter',
+        text: `I personally evaluated the patient, assessed their critical illness, and provided active critical care management. I Have reviewed the documentation provided by the resident/NP/PA and agree with the assessment and plan as documented. 
+
+Initial stroke alert consultation was performed via a secure real-time audio-video platform. I conducted a live, interactive video evaluation of the patient with on-site clinical staff present as needed. 
+
+Care provided included and was not limited to: direct confirmation of pertinent elements of history and examination, coordination of stroke team members, realtime direct preliminary review of imaging, thrombolytic decision making, assessment of candidacy for endovascular intervention, and provision of neurological impressions and recommendations in real time.
+
+Given clinical context of stroke alert at the time of the encounter the patient was presumed to be critically ill and at risk for neurological deterioration, leading to provision of direct and immediate care at the exclusion of other activities. I personally spent [35] minutes providing care for this critically ill patient during this encounter.`
+      },
+      {
+        title: 'Patient Already Discharged',
+        text: `This patient was discussed on attending rounds however the patient was discharged prior to being evaluated by the undersigned; A/P as written by the resident reflects the discussion but findings were not confirmed by me on this DOS.`
+      },
+      {
+        title: '"Not Stroke Alert"',
+        text: `Note - this encounter reflects a consultation visit separate from (subsequent to) a stroke alert; see original stroke alert note for documentation of initial acute decision making.`
+      }
+    ];
+
+    const snippetsContainer = document.getElementById('snippetsContainer');
+    const previewTextarea = document.getElementById('previewTextarea');
+    const copyPreviewBtn = document.getElementById('copyPreviewBtn');
+    const statusEl = document.getElementById('status');
+    const currentTitleEl = document.getElementById('currentTitle');
+
+    // Helper: show a brief "Copied!" message
+    function showStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.style.color = isError ? '#ef4444' : '#10b981';
+      if (message) {
+        setTimeout(() => {
+          statusEl.textContent = '';
+        }, 1500);
+      }
+    }
+
+    // Helper: copy text to clipboard with fallback
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          () => showStatus('Copied to clipboard.'),
+          () => {
+            fallbackCopy(text);
+          }
+        );
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      try {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        temp.style.position = 'fixed';
+        temp.style.left = '-9999px';
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        showStatus('Copied to clipboard.');
+      } catch (e) {
+        showStatus('Unable to copy.', true);
+      }
+    }
+
+    // Create buttons dynamically
+    snippets.forEach((snip, index) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'snippet-button';
+      btn.dataset.index = index;
+
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'title';
+      titleSpan.textContent = snip.title;
+
+      const subtitleSpan = document.createElement('span');
+      subtitleSpan.className = 'subtitle';
+      subtitleSpan.textContent = 'Click to copy & load into preview';
+
+      btn.appendChild(titleSpan);
+      btn.appendChild(subtitleSpan);
+
+      btn.addEventListener('click', () => {
+        previewTextarea.value = snip.text;
+        currentTitleEl.textContent = snip.title;
+        copyToClipboard(snip.text);
+      });
+
+      snippetsContainer.appendChild(btn);
+    });
+
+    // Copy preview button
+    copyPreviewBtn.addEventListener('click', () => {
+      const text = previewTextarea.value || '';
+      if (!text.trim()) {
+        showStatus('Preview is empty.', true);
+        return;
+      }
+      copyToClipboard(text);
+    });
+  </script>
+</body>
+</html>
