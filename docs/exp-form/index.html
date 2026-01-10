@@ -108,6 +108,14 @@
       font-size: 0.92rem;
     }
 
+    .site-logo {
+      display: block;
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 0.75rem;
+    }
+
+    
     label {
       display: block;
       font-weight: 600;
@@ -198,7 +206,12 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Provider Referral Request</h1>
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png"
+        alt="Practice Logo"
+        class="site-logo"
+      />
+      <h1>[Example Clinic] Provider Referral Request</h1>
       <p class="subtitle">
         This is a mockup skeleton form for GitHub Pages. For urgent matters, please call the office directly.
       </p>
@@ -273,6 +286,21 @@
           </select>
           <span class="hint">Hold Ctrl/Command to select multiple (desktop). On mobile, tap to select.</span>
         </label>
+
+        
+        <label for="preferred_provider_flexible" style="font-weight:600; margin-top:0.75rem;">
+          <input
+            id="preferred_provider_flexible"
+            name="preferred_provider_flexible"
+            type="checkbox"
+            value="yes"
+            style="width:auto; margin-right:0.5rem;"
+          />
+          Another provider is acceptable if the preferred provider is booked ≥ 3 months out
+          </label>
+          <span class="hint">If unchecked, we’ll try to schedule only with the selected provider(s).</span>
+
+        
 
         <label for="urgency">
           Urgency
