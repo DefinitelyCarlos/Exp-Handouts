@@ -1,146 +1,316 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Provider Referral Form</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
+    :root{
+      --text: #111;
+      --muted: #555;
+
+      --required-bg: #fafafa;
+      --required-border: #e3e3e3;
+
+      --optional-bg: #f5f8fc;
+      --optional-border: #d6e2f1;
+      --optional-heading: #1f4fbf;
+
+      --note-bg: #f7f7f7;
+      --note-border: #cfcfcf;
+
+      --field-border: #cfcfcf;
+      --field-border-hover: #bdbdbd;
+      --focus: #1f4fbf;
+
+      --btn-bg: #111;
+      --btn-text: #fff;
+      --btn-hover: #000;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      max-width: 720px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-      line-height: 1.5;
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.45;
+    }
+
+    .wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 2.5rem;
+    }
+
+    header {
+      margin-bottom: 1rem;
     }
 
     h1 {
-      margin-bottom: 0.25rem;
+      margin: 0 0 0.25rem 0;
+      font-size: 1.6rem;
+      line-height: 1.2;
     }
 
     .subtitle {
-      color: #555;
-      margin-bottom: 1.5rem;
+      margin: 0.25rem 0 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .intro-note {
+      background: var(--note-bg);
+      border: 1px solid var(--note-border);
+      border-left: 4px solid var(--note-border);
+      padding: 0.85rem 1rem;
+      margin: 1rem 0 1.25rem;
+      font-size: 0.95rem;
+      color: #333;
+      border-radius: 10px;
+    }
+
+    form {
+      margin: 0;
+    }
+
+    .section {
+      padding: 1.15rem 1.15rem 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.1rem;
+    }
+
+    .required-section {
+      background: var(--required-bg);
+      border: 1px solid var(--required-border);
+    }
+
+    .optional-section {
+      background: var(--optional-bg);
+      border: 1px solid var(--optional-border);
+    }
+
+    .section h2 {
+      margin: 0 0 0.35rem 0;
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .required-section h2 { color: #000; }
+    .optional-section h2 { color: var(--optional-heading); }
+
+    .section .section-note {
+      margin: 0.25rem 0 0.9rem 0;
+      color: var(--muted);
+      font-size: 0.92rem;
     }
 
     label {
       display: block;
       font-weight: 600;
-      margin-top: 1rem;
+      margin-top: 0.95rem;
+      font-size: 0.98rem;
+    }
+
+    .hint {
+      display: block;
+      margin-top: 0.25rem;
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.25rem;
+      margin-top: 0.45rem;
+      padding: 0.65rem 0.7rem;
       font-size: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--field-border);
+      background: #fff;
+    }
+
+    input:hover, select:hover, textarea:hover {
+      border-color: var(--field-border-hover);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(31, 79, 191, 0.15);
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 110px;
+      resize: vertical;
     }
 
-    .required {
+    .required-asterisk {
       color: #b00020;
       margin-left: 0.25rem;
     }
 
-    button {
-      margin-top: 2rem;
-      padding: 0.75rem 1.25rem;
-      font-size: 1rem;
-      cursor: pointer;
+    .actions {
+      margin-top: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
     }
 
-    .note {
-      font-size: 0.9rem;
-      color: #555;
-      margin-top: 1rem;
+    button {
+      appearance: none;
+      border: none;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      padding: 0.85rem 1.15rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px; /* touch-friendly */
+    }
+
+    button:hover { background: var(--btn-hover); }
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(31, 79, 191, 0.25);
+    }
+
+    .footer-note {
+      margin-top: 0.75rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    /* Small screens: keep spacing comfortable */
+    @media (max-width: 480px) {
+      .wrap { padding: 1rem 0.85rem 2rem; }
+      .section { padding: 1rem; }
+      h1 { font-size: 1.4rem; }
     }
   </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <header>
+      <h1>Provider Referral Request</h1>
+      <p class="subtitle">
+        This is a mockup skeleton form for GitHub Pages. For urgent matters, please call the office directly.
+      </p>
+    </header>
 
-  <h1>Provider Referral Request</h1>
-  <div class="subtitle">
-    Secure referral intake. Responses within 1 business day.
-  </div>
-
-  <form action="" method="post">
-
-    <!-- Required Fields -->
-    <label>
-      Patient Name <span class="required">*</span>
-      <input type="text" name="patient_name" required>
-    </label>
-
-    <label>
-      Date of Birth <span class="required">*</span>
-      <input type="date" name="dob" required>
-    </label>
-
-    <label>
-      Telephone Number <span class="required">*</span>
-      <input type="tel" name="phone" required>
-    </label>
-
-    <!-- Optional Fields -->
-    <label>
-      Referring Provider
-      <input type="text" name="referring_provider">
-    </label>
-
-    <label>
-      Subspecialty
-      <select name="subspecialty">
-        <option value="">— Select —</option>
-        <option value="epilepsy">Epilepsy</option>
-        <option value="cognitive">Cognitive / Memory</option>
-        <option value="stroke">Stroke / Vascular</option>
-        <option value="movement">Movement Disorders</option>
-        <option value="general">General Neurology</option>
-      </select>
-    </label>
-
-    <label>
-      Preferred Provider (if any)
-      <select name="preferred_provider[]" multiple>
-        <option value="provider1">Dr. A</option>
-        <option value="provider2">Dr. B</option>
-        <option value="provider3">Dr. C</option>
-      </select>
-    </label>
-
-    <label>
-      Urgency
-      <select name="urgency">
-        <option value="routine">Routine (~1 month)</option>
-        <option value="urgent">Urgent (please overbook)</option>
-      </select>
-    </label>
-
-    <label>
-      Reason for Referral
-      <textarea name="reason_for_referral"></textarea>
-    </label>
-
-    <label>
-      Preferred Contact for Correspondence
-      <input
-        type="text"
-        name="correspondence_contact"
-        placeholder="Email, phone number, fax, etc."
-      >
-    </label>
-
-    <button type="submit">Submit Referral</button>
-
-    <div class="note">
-      For urgent clinical matters, please call the office directly.
+    <div class="intro-note">
+      Please provide the required information below. Optional items are included only for any additional context you feel
+      would be helpful for your patient. We value your time—please don’t feel obligated to fill out more than necessary.
     </div>
 
-  </form>
+    <form action="" method="post" autocomplete="on">
+      <!-- REQUIRED -->
+      <section class="section required-section" aria-labelledby="required-info">
+        <h2 id="required-info">Required Information</h2>
+        <p class="section-note">
+          These three items help us contact the patient and confirm identity.
+        </p>
 
+        <label for="patient_name">
+          Patient Name <span class="required-asterisk">*</span>
+          <input id="patient_name" name="patient_name" type="text" required />
+        </label>
+
+        <label for="dob">
+          Date of Birth <span class="required-asterisk">*</span>
+          <input id="dob" name="dob" type="date" required />
+          <span class="hint">If unknown, you can enter an approximate date and clarify in “Reason for referral.”</span>
+        </label>
+
+        <label for="phone">
+          Telephone Number <span class="required-asterisk">*</span>
+          <input id="phone" name="phone" type="tel" inputmode="tel" required />
+          <span class="hint">Best number to reach the patient or caregiver.</span>
+        </label>
+      </section>
+
+      <!-- OPTIONAL -->
+      <section class="section optional-section" aria-labelledby="optional-info">
+        <h2 id="optional-info">Optional Additional Context</h2>
+        <p class="section-note">
+          Include any of the following only if it helps with triage, scheduling, or continuity.
+        </p>
+
+        <label for="referring_provider">
+          Referring Provider
+          <input id="referring_provider" name="referring_provider" type="text" />
+          <span class="hint">Name and practice (if relevant).</span>
+        </label>
+
+        <label for="subspecialty">
+          Subspecialty
+          <select id="subspecialty" name="subspecialty">
+            <option value="">— Select —</option>
+            <option value="general_neurology">General Neurology</option>
+            <option value="epilepsy">Epilepsy</option>
+            <option value="cognitive_memory">Cognitive / Memory</option>
+            <option value="stroke_vascular">Stroke / Vascular</option>
+            <option value="movement_disorders">Movement Disorders</option>
+            <option value="neuromuscular">Neuromuscular</option>
+            <option value="headache">Headache</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+
+        <label for="preferred_provider">
+          Preferred Provider (if any)
+          <select id="preferred_provider" name="preferred_provider[]" multiple size="4">
+            <option value="provider_a">Dr. A</option>
+            <option value="provider_b">Dr. B</option>
+            <option value="provider_c">Dr. C</option>
+            <option value="no_preference">No preference</option>
+          </select>
+          <span class="hint">Hold Ctrl/Command to select multiple (desktop). On mobile, tap to select.</span>
+        </label>
+
+        <label for="urgency">
+          Urgency
+          <select id="urgency" name="urgency">
+            <option value="routine">Routine (~1 month)</option>
+            <option value="urgent_overbook">Urgent (please overbook)</option>
+          </select>
+          <span class="hint">If urgent, include key details in “Reason for referral.”</span>
+        </label>
+
+        <label for="reason_for_referral">
+          Reason for Referral
+          <textarea id="reason_for_referral" name="reason_for_referral"></textarea>
+          <span class="hint">Brief summary, working diagnosis, key concern, or question to answer.</span>
+        </label>
+
+        <label for="correspondence_contact">
+          Preferred Contact for Correspondence
+          <input
+            id="correspondence_contact"
+            name="correspondence_contact"
+            type="text"
+            placeholder="Email, phone number, fax, etc."
+          />
+          <span class="hint">Where should we send updates or questions (and to whom)?</span>
+        </label>
+      </section>
+
+      <div class="actions">
+        <button type="submit">Submit Referral</button>
+      </div>
+
+      <div class="footer-note">
+        Note: This mockup does not yet send data anywhere (the form <code>action</code> is blank). To make it functional,
+        connect it to Google Forms, Formspree, Netlify Forms, or your own backend.
+      </div>
+    </form>
+  </div>
 </body>
 </html>
+```
