@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Provider Referral Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    .required {
+      color: #b00020;
+      margin-left: 0.25rem;
+    }
+
+    button {
+      margin-top: 2rem;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Provider Referral Request</h1>
+  <div class="subtitle">
+    Secure referral intake. Responses within 1 business day.
+  </div>
+
+  <form action="" method="post">
+
+    <!-- Required Fields -->
+    <label>
+      Patient Name <span class="required">*</span>
+      <input type="text" name="patient_name" required>
+    </label>
+
+    <label>
+      Date of Birth <span class="required">*</span>
+      <input type="date" name="dob" required>
+    </label>
+
+    <label>
+      Telephone Number <span class="required">*</span>
+      <input type="tel" name="phone" required>
+    </label>
+
+    <!-- Optional Fields -->
+    <label>
+      Referring Provider
+      <input type="text" name="referring_provider">
+    </label>
+
+    <label>
+      Subspecialty
+      <select name="subspecialty">
+        <option value="">— Select —</option>
+        <option value="epilepsy">Epilepsy</option>
+        <option value="cognitive">Cognitive / Memory</option>
+        <option value="stroke">Stroke / Vascular</option>
+        <option value="movement">Movement Disorders</option>
+        <option value="general">General Neurology</option>
+      </select>
+    </label>
+
+    <label>
+      Preferred Provider (if any)
+      <select name="preferred_provider[]" multiple>
+        <option value="provider1">Dr. A</option>
+        <option value="provider2">Dr. B</option>
+        <option value="provider3">Dr. C</option>
+      </select>
+    </label>
+
+    <label>
+      Urgency
+      <select name="urgency">
+        <option value="routine">Routine (~1 month)</option>
+        <option value="urgent">Urgent (please overbook)</option>
+      </select>
+    </label>
+
+    <label>
+      Reason for Referral
+      <textarea name="reason_for_referral"></textarea>
+    </label>
+
+    <label>
+      Preferred Contact for Correspondence
+      <input
+        type="text"
+        name="correspondence_contact"
+        placeholder="Email, phone number, fax, etc."
+      >
+    </label>
+
+    <button type="submit">Submit Referral</button>
+
+    <div class="note">
+      For urgent clinical matters, please call the office directly.
+    </div>
+
+  </form>
+
+</body>
+</html>
