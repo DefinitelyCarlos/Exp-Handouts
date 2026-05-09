@@ -13,6 +13,9 @@
       line-height: 1.4;
       background: #f5f5f5;
     }
+    body.history-entered {
+      background: #e6f2ff;
+    }
     h1 {
       font-size: 1.6rem;
       margin-bottom: 0.25rem;
@@ -126,6 +129,30 @@
       color: #4b5563;
       margin-top: 0.25rem;
       min-height: 1em;
+    }
+    .floating-panel {
+      position: sticky;
+      top: 1rem;
+      align-self: start;
+      max-height: calc(100vh - 2rem);
+      overflow: auto;
+      padding-right: 0.25rem;
+    }
+    .header-with-checkbox {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.2rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .header-with-checkbox label {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
     }
 
     .section-group-title {
@@ -266,7 +293,7 @@
 
           <label>
             Pertinent History
-            <textarea id="vEEG-history" class="template-input"
+            <textarea id="vEEG-history" class="template-input" rows="10"
               placeholder="e.g., evaluation for focal seizures, spells of concern, etc."></textarea>
           </label>
 
@@ -282,7 +309,10 @@
             <label><input type="radio" name="vEEG-alertness" value="comatose" /> comatose</label>
           </div>
 
-          <div class="section-group-title">AEDs/ASMs during study</div>
+          <div class="header-with-checkbox">
+            <div>AEDs/ASMs during study</div>
+            <label><input type="checkbox" id="vEEG-aeds-none" /> None</label>
+          </div>
           <div class="inline-options" style="flex-wrap: wrap; display:block;">
             <label><input type="checkbox" class="vEEG-aed" value="levetiracetam" /> levetiracetam</label>
             <label><input type="checkbox" class="vEEG-aed" value="propofol" /> propofol</label>
@@ -303,7 +333,10 @@
           </div>
 
           <label>
-            Artifacts / Limitations
+            <div class="header-with-checkbox">
+              <div>Artifacts / Limitations</div>
+              <span><input type="checkbox" id="vEEG-artifacts-default" /> Accept default</span>
+            </div>
             <input type="text" id="vEEG-artifacts" placeholder="[Within expected tolerances]" />
           </label>
         </fieldset>
@@ -340,6 +373,11 @@
             Slowing (free text)
             <input type="text" id="vEEG-slowing" placeholder="e.g., Focal slowing over the left temporal region" />
           </label>
+
+          <div class="header-with-checkbox">
+            <div>EPILEPTIFORM ACTIVITY</div>
+            <label><input type="checkbox" id="vEEG-epileptiform-none" /> None</label>
+          </div>
 
           <label>
             Interictal epileptiform activity
@@ -445,11 +483,12 @@
           <legend>Ceribell – Procedure</legend>
           <label>
             Time parameters
-            <input type="text" id="c-time" placeholder="e.g., 2-hour Ceribell recording beginning at 14:32" />
+            <textarea id="c-time" class="template-input" rows="6"
+              placeholder="e.g., 2-hour Ceribell recording beginning at 14:32"></textarea>
           </label>
           <label>
             Pertinent history
-            <textarea id="c-history" class="template-input"
+            <textarea id="c-history" class="template-input" rows="10"
               placeholder="e.g., Evaluation for possible nonconvulsive status epilepticus in ICU patient with ..."></textarea>
           </label>
 
@@ -606,7 +645,7 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
     </div>
 
     <!-- RIGHT: output -->
-    <div>
+      <div class="floating-panel">
       <!-- Single-output wrapper -->
       <div id="single-output-wrapper">
         <div class="output-header">
@@ -805,7 +844,8 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
       lines.push("BACKGROUND:\n" + withDefault(background));
       lines.push("Slowing:\n" + withDefault(slowing));
 
-      lines.push("EPILEPTIFORM ACTIVITY");
+      const epiNone = document.getElementById("vEEG-epileptiform-none").checked;
+      lines.push(epiNone ? "EPILEPTIFORM ACTIVITY - none seen:" : "EPILEPTIFORM ACTIVITY");
       lines.push("Interictal epileptiform activity:\n" + withDefault(interictal));
       lines.push("Ictal activity:\n" + withDefault(ictal));
       lines.push("OTHER FINDINGS");
@@ -1129,6 +1169,18 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
       }
     }
 
+    function applyDefaultAndUnbracket(inputEl) {
+      if (!inputEl) return;
+      const defaultValue = inputEl.placeholder || inputEl.value || "";
+      inputEl.value = defaultValue.replace(/\[([^\]]+)\]/g, "$1");
+    }
+
+    function setHistoryBackgroundState() {
+      const vHistory = document.getElementById("vEEG-history").value.replace(/\[|\]/g, "").trim();
+      const cHistory = document.getElementById("c-history").value.replace(/\[|\]/g, "").trim();
+      document.body.classList.toggle("history-entered", Boolean(vHistory || cHistory));
+    }
+
     function init() {
       // Study type switching
       document.querySelectorAll('input[name="studyType"]').forEach(radio => {
@@ -1150,6 +1202,45 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
       document.getElementById("generate-btn-multi").addEventListener("click", buildOutput);
       document.getElementById("copy-btn").addEventListener("click", copyOutput);
 
+      document.getElementById("vEEG-aeds-none").addEventListener("change", (e) => {
+        if (!e.target.checked) return;
+        document.querySelectorAll(".vEEG-aed").forEach(cb => (cb.checked = false));
+        const other = document.getElementById("vEEG-aeds-other");
+        other.value = "none";
+      });
+
+      document.querySelectorAll(".vEEG-aed").forEach(cb => {
+        cb.addEventListener("change", () => {
+          if (cb.checked) document.getElementById("vEEG-aeds-none").checked = false;
+        });
+      });
+      document.getElementById("vEEG-aeds-other").addEventListener("input", () => {
+        const noneCb = document.getElementById("vEEG-aeds-none");
+        if (document.getElementById("vEEG-aeds-other").value.trim() !== "none") noneCb.checked = false;
+      });
+
+      document.getElementById("vEEG-artifacts-default").addEventListener("change", (e) => {
+        if (e.target.checked) {
+          applyDefaultAndUnbracket(document.getElementById("vEEG-artifacts"));
+        }
+      });
+
+      document.getElementById("vEEG-epileptiform-none").addEventListener("change", (e) => {
+        if (!e.target.checked) return;
+        document.getElementById("vEEG-interictal").value = "none";
+        document.getElementById("vEEG-ictal").value = "none";
+      });
+      ["vEEG-interictal", "vEEG-ictal"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => {
+          const interictal = document.getElementById("vEEG-interictal").value.trim().toLowerCase();
+          const ictal = document.getElementById("vEEG-ictal").value.trim().toLowerCase();
+          document.getElementById("vEEG-epileptiform-none").checked = (interictal === "none" && ictal === "none");
+        });
+      });
+
+      document.getElementById("vEEG-history").addEventListener("input", setHistoryBackgroundState);
+      document.getElementById("c-history").addEventListener("input", setHistoryBackgroundState);
+
       // Default history brackets so they’re ready to edit
       document.getElementById("vEEG-history").value = "[]";
       document.getElementById("c-history").value = "[]";
@@ -1159,6 +1250,7 @@ The study was negative for NCSE, seizures, RPPs, or overt epileptiform activity.
 
       updateStudyTypeVisibility();
       updateOutputModeVisibility();
+      setHistoryBackgroundState();
       buildOutput(); // initial skeleton
     }
 
